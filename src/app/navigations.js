@@ -1,8 +1,25 @@
 export const navigations = [
-  { name: 'Dashboard', path: '/dashboard/default', icon: 'dashboard' },
-  { name: 'Organization', path: '/dashboard/default/1', icon: 'dashboard', type: 'extLink' },
-  { name: 'Volunteer', path: '/dashboard/default/2', icon: 'dashboard', type: 'extLink' },
-  { name: 'Campaigns', path: '/dashboard/default', icon: 'dashboard', type: 'extLink' },
+  { name: "Dashboard", path: "/dashboard/default", icon: "dashboard" },
+  {
+    name: "Organization",
+    path: "/Organization/list",
+    icon: "dashboard",
+  },
+  {
+    name: "Volunteer",
+    path: "/volunteer/list",
+    icon: "dashboard",
+  },
+  {
+    name: "Campaigns",
+    path: "/campaigns",
+    icon: "dashboard",
+  },
+  {
+    name: "Profile",
+    path: "/profile",
+    icon: "dashboard",
+  },
   // { label: 'PAGES', type: 'label' },
   // {
   //   name: 'Session/Auth',

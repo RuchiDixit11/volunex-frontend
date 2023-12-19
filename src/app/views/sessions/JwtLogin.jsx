@@ -1,89 +1,90 @@
-import { LoadingButton } from '@mui/lab';
+import { LoadingButton } from "@mui/lab";
 import {
   Card,
   Checkbox,
-  FormControlLabel,
-  FormLabel,
+  FormControl,
   Grid,
-  List,
-  ListItem,
-  ListItemText,
-  Menu,
+  InputLabel,
   MenuItem,
-  Radio,
-  RadioGroup,
+  Select,
   TextField,
-} from '@mui/material';
-import { Box, styled, useTheme } from '@mui/system';
-import { Paragraph } from 'app/components/Typography';
-import useAuth from 'app/hooks/useAuth';
-import { Formik } from 'formik';
-import { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import * as Yup from 'yup';
+} from "@mui/material";
+import { Box, styled, useTheme } from "@mui/system";
+import { Paragraph } from "app/components/Typography";
+import useAuth from "app/hooks/useAuth";
+import { Formik } from "formik";
+import { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import * as Yup from "yup";
+import BannerImage from "../../../assets/img/waldemar.jpg";
 
-const FlexBox = styled(Box)(() => ({ display: 'flex', alignItems: 'center' }));
+const FlexBox = styled(Box)(() => ({ display: "flex", alignItems: "center" }));
 
-const JustifyBox = styled(FlexBox)(() => ({ justifyContent: 'center' }));
+const JustifyBox = styled(FlexBox)(() => ({ justifyContent: "center" }));
 
 const ContentBox = styled(Box)(() => ({
-  height: '100%',
-  padding: '32px',
-  position: 'relative',
-  background: 'rgba(0, 0, 0, 0.01)',
+  height: "100%",
+  padding: "32px",
+  position: "relative",
+  background: "rgba(0, 0, 0, 0.01)",
 }));
 
 const JWTRoot = styled(JustifyBox)(() => ({
-  background: '#1A2038',
-  minHeight: '100% !important',
-  '& .card': {
+  backgroundImage: `url(${BannerImage})`,
+  backgroundAttachment: "fixed",
+  backgroundPosition: "center",
+  backgroundRepeat: " no-repeat",
+  backgroundSize: "cover",
+  display: "grid",
+  minHeight: "100% !important",
+  "& .card": {
     maxWidth: 800,
     minHeight: 400,
-    margin: '1rem',
-    display: 'flex',
+    margin: "1rem",
+    display: "flex",
     borderRadius: 12,
-    alignItems: 'center',
+    alignItems: "center",
   },
 }));
 
 // inital login credentials
 const initialValues = {
-  email: 'child@gmail.com',
-  password: '123456',
-  user_type: null,
+  email: "jason@ui-lib.com",
+  password: "dummyPass",
+  remember: true,
+  user_type: "1",
 };
 
 // form field validation schema
 const validationSchema = Yup.object().shape({
   password: Yup.string()
-    .min(6, 'Password must be 6 character length')
-    .required('Password is required!'),
-  email: Yup.string().email('Invalid Email address').required('Email is required!'),
-  user_type: Yup.number().required('User type is required!'),
+    .min(6, "Password must be 6 character length")
+    .required("Password is required!"),
+  email: Yup.string()
+    .email("Invalid Email address")
+    .required("Email is required!"),
 });
 
 const JwtLogin = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [value, setValue] = useState(1);
 
   const { login } = useAuth();
 
-  function handleChangeType(event) {
-    console.log('evvvvvvvvvvvv', event);
-    setValue(event.target.value);
-  }
-
   const handleFormSubmit = async (values) => {
-    console.log('value:::::: onsubmit', values);
+    console.log("hhhhhhhhhhhhhhhhhhhhhhhh", values);
     setLoading(true);
     try {
-      await login(values.email, values.password, values.user_type);
-      navigate('/');
+      await login(values.email, values.password);
+      navigate("/");
     } catch (e) {
       setLoading(false);
     }
+  };
+  const handleUserTypeChange = (event) => {
+    const selectedUserType = event.target.value;
+    console.log("Selected User Type:", selectedUserType);
   };
 
   return (
@@ -92,7 +93,11 @@ const JwtLogin = () => {
         <Grid container>
           <Grid item sm={6} xs={12}>
             <JustifyBox p={4} height="100%" sx={{ minWidth: 320 }}>
-              <img src="/assets/images/illustrations/dreamer.svg" width="100%" alt="" />
+              <img
+                src="/assets/images/illustrations/dreamer.svg"
+                width="100%"
+                alt=""
+              />
             </JustifyBox>
           </Grid>
 
@@ -103,11 +108,38 @@ const JwtLogin = () => {
                 initialValues={initialValues}
                 validationSchema={validationSchema}
               >
-                {({ values, errors, touched, handleChange, handleBlur, handleSubmit }) => (
+                {({
+                  values,
+                  errors,
+                  touched,
+                  handleChange,
+                  handleBlur,
+                  handleSubmit,
+                }) => (
                   <form onSubmit={handleSubmit}>
+                    <FormControl sx={{ width: "100%", mb: 3 }}>
+                      <InputLabel id="demo-simple-select-label">
+                        User Type
+                      </InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value="fff"
+                        label="User Type"
+                        onChange={(event) => {
+                          handleUserTypeChange(event);
+                          handleChange(event);
+                        }}
+                        onBlur={handleBlur}
+                        name="user_type"
+                      >
+                        <MenuItem value={1}>Volunteer</MenuItem>
+                        <MenuItem value={2}>Organization</MenuItem>
+                      </Select>
+                    </FormControl>
                     <TextField
                       fullWidth
-                      size="small"
+                      size="full"
                       type="email"
                       name="email"
                       label="Email"
@@ -122,7 +154,7 @@ const JwtLogin = () => {
 
                     <TextField
                       fullWidth
-                      size="small"
+                      size="full"
                       name="password"
                       type="password"
                       label="Password"
@@ -135,24 +167,24 @@ const JwtLogin = () => {
                       sx={{ mb: 1.5 }}
                     />
 
-                    <FormLabel component="legend">User type</FormLabel>
-                    <RadioGroup
-                      // value={value}
-                      name="user_type"
-                      className="group"
-                      aria-label="Gender"
-                      onChange={handleChange}
-                      value={values.user_type}
-                      // onChange={handleChange}
-                    >
-                      <FormControlLabel value="1" control={<Radio />} label="Orgnaization" />
-                      <FormControlLabel value="2" control={<Radio />} label="Volunteer" />
-                    </RadioGroup>
-
                     <FlexBox justifyContent="space-between">
+                      <FlexBox gap={1}>
+                        <Checkbox
+                          size="small"
+                          name="remember"
+                          onChange={handleChange}
+                          checked={values.remember}
+                          sx={{ padding: 0 }}
+                        />
+
+                        <Paragraph>Remember Me</Paragraph>
+                      </FlexBox>
+
                       <NavLink
                         to="/session/forgot-password"
-                        style={{ color: theme.palette.primary.main }}
+                        style={{
+                          color: theme.palette.primary.main,
+                        }}
                       >
                         Forgot password?
                       </NavLink>
@@ -172,7 +204,10 @@ const JwtLogin = () => {
                       Don't have an account?
                       <NavLink
                         to="/session/signup"
-                        style={{ color: theme.palette.primary.main, marginLeft: 5 }}
+                        style={{
+                          color: theme.palette.primary.main,
+                          marginLeft: 5,
+                        }}
                       >
                         Register
                       </NavLink>
