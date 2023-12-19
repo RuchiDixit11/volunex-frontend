@@ -1,5 +1,19 @@
 import { LoadingButton } from '@mui/lab';
-import { Card, Checkbox, Grid, TextField } from '@mui/material';
+import {
+  Card,
+  Checkbox,
+  FormControlLabel,
+  FormLabel,
+  Grid,
+  List,
+  ListItem,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Radio,
+  RadioGroup,
+  TextField,
+} from '@mui/material';
 import { Box, styled, useTheme } from '@mui/system';
 import { Paragraph } from 'app/components/Typography';
 import useAuth from 'app/hooks/useAuth';
@@ -34,9 +48,9 @@ const JWTRoot = styled(JustifyBox)(() => ({
 
 // inital login credentials
 const initialValues = {
-  email: 'jason@ui-lib.com',
-  password: 'dummyPass',
-  remember: true,
+  email: 'child@gmail.com',
+  password: '123456',
+  user_type: null,
 };
 
 // form field validation schema
@@ -45,19 +59,27 @@ const validationSchema = Yup.object().shape({
     .min(6, 'Password must be 6 character length')
     .required('Password is required!'),
   email: Yup.string().email('Invalid Email address').required('Email is required!'),
+  user_type: Yup.number().required('User type is required!'),
 });
 
 const JwtLogin = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [value, setValue] = useState(1);
 
   const { login } = useAuth();
 
+  function handleChangeType(event) {
+    console.log('evvvvvvvvvvvv', event);
+    setValue(event.target.value);
+  }
+
   const handleFormSubmit = async (values) => {
+    console.log('value:::::: onsubmit', values);
     setLoading(true);
     try {
-      await login(values.email, values.password);
+      await login(values.email, values.password, values.user_type);
       navigate('/');
     } catch (e) {
       setLoading(false);
@@ -113,19 +135,21 @@ const JwtLogin = () => {
                       sx={{ mb: 1.5 }}
                     />
 
+                    <FormLabel component="legend">User type</FormLabel>
+                    <RadioGroup
+                      // value={value}
+                      name="user_type"
+                      className="group"
+                      aria-label="Gender"
+                      onChange={handleChange}
+                      value={values.user_type}
+                      // onChange={handleChange}
+                    >
+                      <FormControlLabel value="1" control={<Radio />} label="Orgnaization" />
+                      <FormControlLabel value="2" control={<Radio />} label="Volunteer" />
+                    </RadioGroup>
+
                     <FlexBox justifyContent="space-between">
-                      <FlexBox gap={1}>
-                        <Checkbox
-                          size="small"
-                          name="remember"
-                          onChange={handleChange}
-                          checked={values.remember}
-                          sx={{ padding: 0 }}
-                        />
-
-                        <Paragraph>Remember Me</Paragraph>
-                      </FlexBox>
-
                       <NavLink
                         to="/session/forgot-password"
                         style={{ color: theme.palette.primary.main }}
