@@ -84,7 +84,7 @@ export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const login = async (email, password, user_type) => {
-    const response = await axios.post('/api/auth/login', {
+    const response = await axios.post('http://localhost:3300/api/auth/login', {
       email,
       password,
       user_type,
@@ -103,52 +103,71 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (
     // email, username, password
-    user_type,
-    email,
-    password,
-    fullname,
-    gender,
-    dob,
-    phone,
-    address,
-    city,
-    state,
-    zip,
-    skills,
-    volunteer_experience,
-    languages_spoken,
-    emergency_contact,
-    short_bio
+    // user_type,
+    // email,
+    // password,
+    // fullname,
+    // gender,
+    // dob,
+    // phone,
+    // address,
+    // city,
+    // state,
+    // zip,
+    // skills,
+    // volunteer_experience,
+    // languages_spoken,
+    // emergency_contact,
+    // short_bio
+    payload
   ) => {
-    const response = await axios.post('api/user/signup', {
-      user_type,
-      email,
-      password,
-      fullname,
-      gender,
-      dob,
-      phone,
-      address,
-      city,
-      state,
-      zip,
-      skills,
-      volunteer_experience,
-      languages_spoken,
-      emergency_contact,
-      short_bio,
-    });
+    const response = await axios.post(
+      'http://localhost:3300/api/auth/signup',
+      payload
+      //  {
+      // email,
+      // password,
+      // fullname,
+      // gender,
+      // dob,
+      // phone,
+      // address,
+      // city,
+      // state,
+      // zip,
+      // skills,
+      // volunteer_experience,
+      // languages_spoken,
+      // emergency_contact,
+      // short_bio,
 
-    const { accessToken, user } = response.data;
+      //  user_type,
+      // organization_name: '',
+      // organization_type: '',
+      // organization_address: '',
+      // organization_phone: '',
+      // organization_city: '',
+      // organization_state: '',
+      // organization_zip: '',
+      // organization_mission: '',
+      // organization_year_founded: '',
+      // organization_employees: '',
+      // organization_focusarea: '',
+      // organization_supports: '',
+      // organization_id: ''
+      // }
+    );
+    console.log(response, 'response sigup ');
+    // const { accessToken, user } = response.data;
 
-    setSession(accessToken);
+    // setSession(accessToken);
 
-    dispatch({
-      type: 'REGISTER',
-      payload: {
-        user,
-      },
-    });
+    // dispatch({
+    //   type: 'REGISTER',
+    //   payload: {
+    //     user,
+    //   },
+    // });
   };
 
   const logout = () => {

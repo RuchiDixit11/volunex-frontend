@@ -1,5 +1,5 @@
 // import { useTheme } from '@emotion/react';
-import { LoadingButton } from "@mui/lab";
+import { LoadingButton } from '@mui/lab';
 import {
   Card,
   Checkbox,
@@ -11,25 +11,25 @@ import {
   TextField,
   Menu,
   MenuItem,
-} from "@mui/material";
-import { Box, styled } from "@mui/system";
-import { Paragraph } from "app/components/Typography";
-import useAuth from "app/hooks/useAuth";
-import { Formik } from "formik";
-import { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-import * as Yup from "yup";
-import LocalizationProvider from "@mui/lab/LocalizationProvider";
-import { DatePicker } from "@mui/lab";
-import AdapterDateFns from "@mui/lab/AdapterDateFns";
+} from '@mui/material';
+import { Box, styled } from '@mui/system';
+import { Paragraph } from 'app/components/Typography';
+import useAuth from 'app/hooks/useAuth';
+import { Formik } from 'formik';
+import { useState } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import * as Yup from 'yup';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import { DatePicker } from '@mui/lab';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
 
-import { useTheme } from "@mui/material/styles";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import InputLabel from "@mui/material/InputLabel";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import BannerImage from "../../../assets/img/waldemar.jpg";
-import StepperFormRegistration from "./stepperFormregistration";
+import { useTheme } from '@mui/material/styles';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import BannerImage from '../../../assets/img/waldemar.jpg';
+import StepperFormRegistration from './stepperFormregistration';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -42,14 +42,8 @@ const MenuProps = {
   },
 };
 
-const UserType = ["Orgnaization", "Volunteer"];
-const names = [
-  "Marketing",
-  "Web Development",
-  "Event Planning",
-  "Ralph Hubbard",
-  "Omar Alexander",
-];
+const UserType = ['Orgnaization', 'Volunteer'];
+const names = ['Marketing', 'Web Development', 'Event Planning', 'Ralph Hubbard', 'Omar Alexander'];
 
 function getStyles(name, personName, theme) {
   return {
@@ -60,78 +54,76 @@ function getStyles(name, personName, theme) {
   };
 }
 
-const FlexBox = styled(Box)(() => ({ display: "flex", alignItems: "center" }));
+const FlexBox = styled(Box)(() => ({ display: 'flex', alignItems: 'center' }));
 
-const JustifyBox = styled(FlexBox)(() => ({ justifyContent: "center" }));
+const JustifyBox = styled(FlexBox)(() => ({ justifyContent: 'center' }));
 
 const JWTRegister = styled(JustifyBox)(() => ({
   backgroundImage: `url(${BannerImage})`,
-  backgroundAttachment: "fixed",
-  backgroundPosition: "center",
-  backgroundRepeat: " no-repeat",
-  backgroundSize: "cover",
-  display: "grid",
-  minHeight: "100vh !important",
-  "& .card": {
+  backgroundAttachment: 'fixed',
+  backgroundPosition: 'center',
+  backgroundRepeat: ' no-repeat',
+  backgroundSize: 'cover',
+  display: 'grid',
+  minHeight: '100vh !important',
+  '& .card': {
     maxWidth: 800,
     minHeight: 400,
-    margin: "1rem",
-    display: "flex",
+    margin: '1rem',
+    display: 'flex',
     borderRadius: 12,
-    alignItems: "center",
+    alignItems: 'center',
   },
 }));
 
 // inital login credentials
 const initialValues = {
   user_type: null,
-  email: "",
-  password: "",
-  fullname: "",
+  email: '',
+  password: '',
+  fullname: '',
   gender: null,
-  dob: "",
+  dob: '',
   phone: null,
-  address: "",
-  city: "",
-  state: "",
-  zip: "",
-  skills: "",
-  volunteer_experience: "",
-  languages_spoken: "",
-  emergency_contact: "",
-  short_bio: "",
+  address: '',
+  city: '',
+  state: '',
+  zip: '',
+  skills: '',
+  volunteer_experience: '',
+  languages_spoken: '',
+  emergency_contact: '',
+  short_bio: '',
 };
 
 // form field validation schema
 const validationSchema = Yup.object().shape({
   password: Yup.string()
-    .min(6, "Password must be 6 character length")
-    .required("Password is required!"),
-  email: Yup.string()
-    .email("Invalid Email address")
-    .required("Email is required!"),
+    .min(6, 'Password must be 6 character length')
+    .required('Password is required!'),
+  email: Yup.string().email('Invalid Email address').required('Email is required!'),
 });
 
 const options = [
-  "None",
-  "Atria",
-  "Callisto",
-  "Dione",
-  "Ganymede",
-  "Hangouts Call",
-  "Luna",
-  "Oberon",
-  "Phobos",
-  "Pyxis",
-  "Sedna",
-  "Titania",
-  "Triton",
-  "Umbriel",
+  'None',
+  'Atria',
+  'Callisto',
+  'Dione',
+  'Ganymede',
+  'Hangouts Call',
+  'Luna',
+  'Oberon',
+  'Phobos',
+  'Pyxis',
+  'Sedna',
+  'Titania',
+  'Triton',
+  'Umbriel',
 ];
 const ContentBox = styled(JustifyBox)(() => ({
-  height: "100%",
-  padding: "32px",
-  background: "rgba(0, 0, 0, 0.01)",
+  height: '100%',
+  padding: '32px',
+  background: 'rgba(0, 0, 0, 0.01)',
 }));
 const JwtRegister = () => {
   const theme = useTheme();
@@ -144,75 +136,50 @@ const JwtRegister = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
-  const handleDateChange = (date) => setState({ ...state, date });
-
-  const handleFormSubmit = (values) => {
-    console.log("values on submit", values);
-    setLoading(true);
-    try {
-      register(
-        values.user_type,
-        values.email,
-        values.password,
-        values.fullname,
-        values.gender,
-        values.dob,
-        values.phone,
-        values.address,
-        values.city,
-        values.state,
-        values.zip,
-        values.skills,
-        values.volunteer_experience,
-        values.languages_spoken,
-        values.emergency_contact,
-        values.short_bio
-      );
-      navigate("/");
-      setLoading(false);
-    } catch (e) {
-      console.log(e);
-      setLoading(false);
-    }
-  };
-
   return (
     <JWTRegister>
       <Card className="card">
         <Grid container>
           <Box p={4} height="100%">
-            <Formik
-              onSubmit={handleFormSubmit}
-              initialValues={initialValues}
-              validationSchema={validationSchema}
-            >
-              {({
-                values,
-                errors,
-                touched,
-                handleChange,
-                handleBlur,
-                handleSubmit,
-              }) => (
-                <form onSubmit={handleSubmit}>
-                  <Grid container spacing={2}>
-                    <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
-                      <ContentBox>
-                        <img
-                          width="100%"
-                          alt="Register"
-                          src="/assets/images/illustrations/posting_photo.svg"
-                        />
-                      </ContentBox>
-                    </Grid>
-                    <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
-                      <h2 style={{ textAlign: "center" }}>Sigin Up</h2>
-                      <StepperFormRegistration
-                        handleSubmit={handleFormSubmit}
-                      />
-                    </Grid>
-                  </Grid>
-                  {/* <Grid container spacing={2}>
+            <Grid container spacing={2}>
+              <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
+                <ContentBox>
+                  <img
+                    width="100%"
+                    alt="Register"
+                    src="/assets/images/illustrations/posting_photo.svg"
+                  />
+                </ContentBox>
+              </Grid>
+              <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
+                <h2 style={{ textAlign: 'center' }}>Sign Up </h2>
+                <StepperFormRegistration />
+              </Grid>
+            </Grid>
+
+            <Paragraph>
+              Already have an account?
+              <NavLink
+                to="/session/signin"
+                style={{
+                  color: theme.palette.primary.main,
+                  marginLeft: 5,
+                }}
+              >
+                Login
+              </NavLink>
+            </Paragraph>
+          </Box>
+        </Grid>
+      </Card>
+    </JWTRegister>
+  );
+};
+
+export default JwtRegister;
+
+{
+  /* <Grid container spacing={2}>
                     <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
                       <FormControl
                         sx={{ width: "100%" }}
@@ -558,28 +525,5 @@ const JwtRegister = () => {
                     >
                       Regiser
                     </LoadingButton>
-                  </Grid> */}
-                  <Paragraph>
-                    Already have an account?
-                    <NavLink
-                      to="/session/signin"
-                      style={{
-                        color: theme.palette.primary.main,
-                        marginLeft: 5,
-                      }}
-                    >
-                      Login
-                    </NavLink>
-                  </Paragraph>
-                </form>
-              )}
-            </Formik>
-          </Box>
-          {/* </Grid> */}
-        </Grid>
-      </Card>
-    </JWTRegister>
-  );
-};
-
-export default JwtRegister;
+                  </Grid> */
+}
