@@ -24,18 +24,18 @@ const Brand = ({ children }) => {
   return (
     <BrandRoot>
       <Box display="flex" alignItems="center">
-        <MyLogo />
+        {/* <MyLogo /> */}
         <StyledSpan mode={mode} className="sidenavHoverShow">
           Volunex
         </StyledSpan>
       </Box>
 
-      <Box
+      {/* <Box
         className="sidenavHoverShow"
         sx={{ display: mode === "compact" ? "none" : "block" }}
       >
         {children || null}
-      </Box>
+      </Box> */}
     </BrandRoot>
   );
 };

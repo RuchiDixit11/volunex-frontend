@@ -1,3 +1,4 @@
+import * as React from "react";
 import {
   Avatar,
   Box,
@@ -14,9 +15,20 @@ import {
   TableRow,
   useTheme,
 } from "@mui/material";
+
+import Button from "@mui/material/Button";
 import { Paragraph } from "app/components/Typography";
 import { Breadcrumb, SimpleCard } from "app/components";
-
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import Slide from "@mui/material/Slide";
+import CreateCampaign from "./CreateCampaign";
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 const CardHeader = styled(Box)(() => ({
   display: "flex",
   paddingLeft: "24px",
@@ -69,6 +81,15 @@ const Campaigns = () => {
   const bgError = palette.error.main;
   const bgPrimary = palette.primary.main;
   const bgSecondary = palette.secondary.main;
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   return (
     <Container>
@@ -80,6 +101,16 @@ const Campaigns = () => {
           ]}
         />
       </Box>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "end",
+        }}
+      >
+        <Button variant="outlined" onClick={handleClickOpen} sx={{ mb: 4 }}>
+          Creat Campaigns
+        </Button>
+      </div>
       <Card elevation={3} sx={{ pt: "20px", mb: 3 }}>
         <CardHeader>
           <Title>Campaigns List</Title>
@@ -101,7 +132,7 @@ const Campaigns = () => {
                   Organization
                 </TableCell>
                 <TableCell sx={{ px: 0 }} colSpan={2}>
-                  no of volunteer
+                  No of volunteer
                 </TableCell>
                 <TableCell sx={{ px: 0 }} colSpan={1}>
                   Action
@@ -158,6 +189,24 @@ const Campaigns = () => {
           </ProductTable>
         </Box>
       </Card>
+      <Dialog
+        open={open}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={handleClose}
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle>{"Craete Campaigns"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-slide-description">
+            <CreateCampaign />
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleClose}>Craete</Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };
