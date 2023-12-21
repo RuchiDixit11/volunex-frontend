@@ -127,7 +127,6 @@ const ContentBox = styled(JustifyBox)(() => ({
 }));
 const JwtRegister = () => {
   const theme = useTheme();
-  const { register } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [state, setState] = useState({ date: new Date() });

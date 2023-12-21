@@ -1,7 +1,7 @@
-import React, { createContext, useEffect, useReducer } from "react";
-import jwtDecode from "jwt-decode";
-import axios from "axios.js";
-import { MatxLoading } from "app/components";
+import React, { createContext, useEffect, useReducer } from 'react';
+import jwtDecode from 'jwt-decode';
+import axios from 'axios.js';
+import { MatxLoading } from 'app/components';
 
 const initialState = {
   isAuthenticated: false,
@@ -21,17 +21,17 @@ const isValidToken = (accessToken) => {
 
 const setSession = (accessToken) => {
   if (accessToken) {
-    localStorage.setItem("accessToken", accessToken);
+    localStorage.setItem('disasterToken', accessToken);
     axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
   } else {
-    localStorage.removeItem("accessToken");
+    localStorage.removeItem('disasterToken');
     delete axios.defaults.headers.common.Authorization;
   }
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "INIT": {
+    case 'INIT': {
       const { isAuthenticated, user } = action.payload;
 
       return {
@@ -41,7 +41,7 @@ const reducer = (state, action) => {
         user,
       };
     }
-    case "LOGIN": {
+    case 'LOGIN': {
       const { user } = action.payload;
 
       return {
@@ -50,20 +50,26 @@ const reducer = (state, action) => {
         user,
       };
     }
-    case "LOGOUT": {
+    case 'LOGOUT': {
       return {
         ...state,
         isAuthenticated: false,
         user: null,
       };
     }
-    case "REGISTER": {
+    case 'REGISTER': {
       const { user } = action.payload;
 
       return {
         ...state,
         isAuthenticated: true,
         user,
+      };
+    }
+    case 'GET_REQUEST': {
+      return {
+        ...state,
+        isAuthenticated: true,
       };
     }
     default: {
@@ -74,34 +80,57 @@ const reducer = (state, action) => {
 
 const AuthContext = createContext({
   ...initialState,
-  method: "JWT",
+  method: 'JWT',
   login: () => Promise.resolve(),
   logout: () => {},
   register: () => Promise.resolve(),
+  getRequest: () => Promise.resolve(),
+  addEvent: () => Promise.resolve(),
 });
 
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const login = async (email, password, user_type) => {
-    const response = await axios.post(
-      "http://192.168.29.140:4006/api/auth/login",
-      {
-        username: email,
-        password,
-        // user_type,
-      }
-    );
+    const response = await axios.post('http://localhost:3300/api/auth/login', {
+      email,
+      password,
+      user_type,
+    });
 
-    const { accessToken, user } = response.data;
-
-    setSession(accessToken);
+    const { token, data } = response.data;
+    console.log('token received', token, 'data::::', data);
+    // localStorage.setItem('token', token);
+    setSession(token);
 
     dispatch({
-      type: "LOGIN",
+      type: 'LOGIN',
       payload: {
-        user,
+        data,
       },
+    });
+  };
+
+  const getRequest = async () => {
+    // const token =
+    //   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjU4MWY0MGE1NDk2OGU4NzZhZjVmNjIyIn0sImlhdCI6MTcwMzEyNTQwNSwiZXhwIjoxNzAzMTMzODA1fQ.9qGp6emm1w7ErhETY8RLRTSiOxhexhWVyLecYCCQ_1s';
+    const token = localStorage.getItem('disasterToken');
+
+    const response = await axios.get('http://localhost:3300/api/user/filters', {
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        'x-auth-token': `${token}`,
+      },
+    });
+    const { data, msg } = response;
+    console.log(data, '-----data----', msg);
+
+    dispatch({
+      type: 'GET_REQUEST',
+      // payload: {
+      //   user,
+      // },
     });
   };
 
@@ -125,43 +154,8 @@ export const AuthProvider = ({ children }) => {
     // short_bio
     payload
   ) => {
-    const response = await axios.post(
-      "http://localhost:3300/api/auth/signup",
-      payload
-      //  {
-      // email,
-      // password,
-      // fullname,
-      // gender,
-      // dob,
-      // phone,
-      // address,
-      // city,
-      // state,
-      // zip,
-      // skills,
-      // volunteer_experience,
-      // languages_spoken,
-      // emergency_contact,
-      // short_bio,
-
-      //  user_type,
-      // organization_name: '',
-      // organization_type: '',
-      // organization_address: '',
-      // organization_phone: '',
-      // organization_city: '',
-      // organization_state: '',
-      // organization_zip: '',
-      // organization_mission: '',
-      // organization_year_founded: '',
-      // organization_employees: '',
-      // organization_focusarea: '',
-      // organization_supports: '',
-      // organization_id: ''
-      // }
-    );
-    console.log(response, "response sigup ");
+    const response = await axios.post('http://localhost:3300/api/auth/signup', payload);
+    console.log(response, 'response sigup ');
     // const { accessToken, user } = response.data;
 
     // setSession(accessToken);
@@ -176,21 +170,43 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setSession(null);
-    dispatch({ type: "LOGOUT" });
+    dispatch({ type: 'LOGOUT' });
+  };
+
+  const addEvent = async (payload) => {
+    const token = localStorage.getItem('disasterToken');
+    const response = await axios.post('http://localhost:3300/api/user/add_event', payload, {
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        'x-auth-token': `${token}`,
+      },
+    });
+    console.log(response, 'response sigup ');
+    // const { accessToken, user } = response.data;
+    return response;
+    // setSession(accessToken);
+
+    // dispatch({
+    //   type: 'ADD_EVENT',
+    //   payload: {
+    //     user,
+    //   },
+    // });
   };
 
   useEffect(() => {
     (async () => {
       try {
-        const accessToken = window.localStorage.getItem("accessToken");
+        const accessToken = window.localStorage.getItem('accessToken');
 
         if (accessToken && isValidToken(accessToken)) {
           setSession(accessToken);
-          const response = await axios.get("/api/auth/profile");
+          const response = await axios.get('/api/auth/profile');
           const { user } = response.data;
 
           dispatch({
-            type: "INIT",
+            type: 'INIT',
             payload: {
               isAuthenticated: true,
               user,
@@ -198,7 +214,7 @@ export const AuthProvider = ({ children }) => {
           });
         } else {
           dispatch({
-            type: "INIT",
+            type: 'INIT',
             payload: {
               isAuthenticated: false,
               user: null,
@@ -208,7 +224,7 @@ export const AuthProvider = ({ children }) => {
       } catch (err) {
         console.error(err);
         dispatch({
-          type: "INIT",
+          type: 'INIT',
           payload: {
             isAuthenticated: false,
             user: null,
@@ -226,10 +242,12 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         ...state,
-        method: "JWT",
+        method: 'JWT',
         login,
         logout,
         register,
+        getRequest,
+        addEvent,
       }}
     >
       {children}

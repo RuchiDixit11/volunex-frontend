@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from 'react';
 import {
   Avatar,
   Box,
@@ -14,66 +14,68 @@ import {
   TableHead,
   TableRow,
   useTheme,
-} from "@mui/material";
+} from '@mui/material';
 
-import Button from "@mui/material/Button";
-import { Paragraph } from "app/components/Typography";
-import { Breadcrumb, SimpleCard } from "app/components";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import Slide from "@mui/material/Slide";
-import CreateCampaign from "./CreateCampaign";
+import Button from '@mui/material/Button';
+import { Paragraph } from 'app/components/Typography';
+import { Breadcrumb, SimpleCard } from 'app/components';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Slide from '@mui/material/Slide';
+import CreateCampaign from './CreateCampaign';
+import useAuth from 'app/hooks/useAuth';
+
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 const CardHeader = styled(Box)(() => ({
-  display: "flex",
-  paddingLeft: "24px",
-  paddingRight: "24px",
-  marginBottom: "12px",
-  alignItems: "center",
-  justifyContent: "space-between",
+  display: 'flex',
+  paddingLeft: '24px',
+  paddingRight: '24px',
+  marginBottom: '12px',
+  alignItems: 'center',
+  justifyContent: 'space-between',
 }));
 
-const Title = styled("span")(() => ({
-  fontSize: "1rem",
-  fontWeight: "500",
-  textTransform: "capitalize",
+const Title = styled('span')(() => ({
+  fontSize: '1rem',
+  fontWeight: '500',
+  textTransform: 'capitalize',
 }));
 
 const ProductTable = styled(Table)(() => ({
   minWidth: 400,
-  whiteSpace: "pre",
-  "& small": {
+  whiteSpace: 'pre',
+  '& small': {
     width: 50,
     height: 15,
     borderRadius: 500,
-    boxShadow: "0 0 2px 0 rgba(0, 0, 0, 0.12), 0 2px 2px 0 rgba(0, 0, 0, 0.24)",
+    boxShadow: '0 0 2px 0 rgba(0, 0, 0, 0.12), 0 2px 2px 0 rgba(0, 0, 0, 0.24)',
   },
-  "& td": { borderBottom: "none" },
-  "& td:first-of-type": { paddingLeft: "16px !important" },
+  '& td': { borderBottom: 'none' },
+  '& td:first-of-type': { paddingLeft: '16px !important' },
 }));
 
-const Small = styled("small")(({ bgcolor }) => ({
+const Small = styled('small')(({ bgcolor }) => ({
   width: 50,
   height: 15,
-  color: "#fff",
-  padding: "2px 8px",
-  borderRadius: "4px",
-  overflow: "hidden",
+  color: '#fff',
+  padding: '2px 8px',
+  borderRadius: '4px',
+  overflow: 'hidden',
   background: bgcolor,
-  boxShadow: "0 0 2px 0 rgba(0, 0, 0, 0.12), 0 2px 2px 0 rgba(0, 0, 0, 0.24)",
+  boxShadow: '0 0 2px 0 rgba(0, 0, 0, 0.12), 0 2px 2px 0 rgba(0, 0, 0, 0.24)',
 }));
 
-const Container = styled("div")(({ theme }) => ({
-  margin: "30px",
-  [theme.breakpoints.down("sm")]: { margin: "16px" },
-  "& .breadcrumb": {
-    marginBottom: "30px",
-    [theme.breakpoints.down("sm")]: { marginBottom: "16px" },
+const Container = styled('div')(({ theme }) => ({
+  margin: '30px',
+  [theme.breakpoints.down('sm')]: { margin: '16px' },
+  '& .breadcrumb': {
+    marginBottom: '30px',
+    [theme.breakpoints.down('sm')]: { marginBottom: '16px' },
   },
 }));
 const Campaigns = () => {
@@ -83,6 +85,14 @@ const Campaigns = () => {
   const bgSecondary = palette.secondary.main;
   const [open, setOpen] = React.useState(false);
 
+  const [formData, setFormData] = React.useState({
+    org_id: '657afa9d2ab2dd6ae80b7683',
+    event_name: 'Earthquakes',
+    short_bio: 'Very bad disaster',
+    from_date: '05/01/2023',
+    to_date: '05/01/2023',
+  });
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -90,28 +100,35 @@ const Campaigns = () => {
   const handleClose = () => {
     setOpen(false);
   };
+  const { addEvent } = useAuth();
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const formDataObject = new FormData();
+    // Append each field to the FormData object
+    Object.keys(formData).forEach((key) => {
+      formDataObject.append(key, formData[key]);
+    });
+    const res = addEvent(formDataObject);
+    console.log('res::::: addd event ', res);
+  };
 
   return (
     <Container>
       <Box className="breadcrumb">
-        <Breadcrumb
-          routeSegments={[
-            { name: "Dashboard", path: "/" },
-            { name: "Campaigns" },
-          ]}
-        />
+        <Breadcrumb routeSegments={[{ name: 'Dashboard', path: '/' }, { name: 'Campaigns' }]} />
       </Box>
       <div
         style={{
-          display: "flex",
-          justifyContent: "end",
+          display: 'flex',
+          justifyContent: 'end',
         }}
       >
         <Button variant="outlined" onClick={handleClickOpen} sx={{ mb: 4 }}>
-          Creat Campaigns
+          Create Campaigns
         </Button>
       </div>
-      <Card elevation={3} sx={{ pt: "20px", mb: 3 }}>
+      <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
         <CardHeader>
           <Title>Campaigns List</Title>
           <Select size="small" defaultValue="swimming">
@@ -143,33 +160,21 @@ const Campaigns = () => {
             <TableBody>
               {productList.map((product, index) => (
                 <TableRow key={index} hover>
-                  <TableCell
-                    colSpan={4}
-                    align="left"
-                    sx={{ px: 0, textTransform: "capitalize" }}
-                  >
+                  <TableCell colSpan={4} align="left" sx={{ px: 0, textTransform: 'capitalize' }}>
                     <Box display="flex" alignItems="center">
                       <Avatar src={product.imgUrl} />
                       <Paragraph sx={{ m: 0, ml: 4 }}>{product.name}</Paragraph>
                     </Box>
                   </TableCell>
 
-                  <TableCell
-                    align="left"
-                    colSpan={2}
-                    sx={{ px: 0, textTransform: "capitalize" }}
-                  >
-                    {product.skill > 999
-                      ? (product.skill / 1000).toFixed(1) + ""
-                      : product.skill}
+                  <TableCell align="left" colSpan={2} sx={{ px: 0, textTransform: 'capitalize' }}>
+                    {product.skill > 999 ? (product.skill / 1000).toFixed(1) + '' : product.skill}
                   </TableCell>
 
                   <TableCell sx={{ px: 0 }} align="left" colSpan={2}>
                     {product.location ? (
                       product.location < 20 ? (
-                        <Small bgcolor={bgSecondary}>
-                          {product.location} location
-                        </Small>
+                        <Small bgcolor={bgSecondary}>{product.location} location</Small>
                       ) : (
                         <Small bgcolor={bgPrimary}>in stock</Small>
                       )
@@ -196,16 +201,20 @@ const Campaigns = () => {
         onClose={handleClose}
         aria-describedby="alert-dialog-slide-description"
       >
-        <DialogTitle>{"Craete Campaigns"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-slide-description">
-            <CreateCampaign />
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleClose}>Craete</Button>
-        </DialogActions>
+        <form onSubmit={handleSubmit}>
+          <DialogTitle>{'Create Campaigns'}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-slide-description">
+              <CreateCampaign />
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancel</Button>
+            <Button type="submit" onClick={handleClose}>
+              Create
+            </Button>
+          </DialogActions>
+        </form>
       </Dialog>
     </Container>
   );
@@ -213,32 +222,32 @@ const Campaigns = () => {
 
 const productList = [
   {
-    imgUrl: "/assets/images/products/headphone-2.jpg",
-    name: "earphone",
+    imgUrl: '/assets/images/products/headphone-2.jpg',
+    name: 'earphone',
     skill: 100,
     location: 15,
   },
   {
-    imgUrl: "/assets/images/products/headphone-3.jpg",
-    name: "earphone",
+    imgUrl: '/assets/images/products/headphone-3.jpg',
+    name: 'earphone',
     skill: 1500,
     location: 30,
   },
   {
-    imgUrl: "/assets/images/products/iphone-2.jpg",
-    name: "iPhone x",
+    imgUrl: '/assets/images/products/iphone-2.jpg',
+    name: 'iPhone x',
     skill: 1900,
     location: 35,
   },
   {
-    imgUrl: "/assets/images/products/iphone-1.jpg",
-    name: "iPhone x",
+    imgUrl: '/assets/images/products/iphone-1.jpg',
+    name: 'iPhone x',
     skill: 100,
     location: 0,
   },
   {
-    imgUrl: "/assets/images/products/headphone-3.jpg",
-    name: "Head phone",
+    imgUrl: '/assets/images/products/headphone-3.jpg',
+    name: 'Head phone',
     skill: 1190,
     location: 5,
   },

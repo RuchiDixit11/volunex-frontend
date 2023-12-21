@@ -71,15 +71,16 @@ const JwtLogin = () => {
   const { login } = useAuth();
 
   const handleFormSubmit = async (values) => {
-    console.log('Registration::::', values);
     setLoading(true);
     try {
       await login(values.email, values.password, values.user_type);
+      console.log('user login::::', values);
       navigate('/');
     } catch (e) {
       setLoading(false);
     }
   };
+
   const handleUserTypeChange = (event) => {
     const selectedUserType = event.target.value;
     console.log('Selected User Type:', selectedUserType);
@@ -104,27 +105,6 @@ const JwtLogin = () => {
               >
                 {({ values, errors, touched, handleChange, handleBlur, handleSubmit }) => (
                   <form onSubmit={handleSubmit}>
-                    {/* <FormControl sx={{ width: "100%", mb: 3 }}>
-                      <InputLabel id="demo-simple-select-label">
-                        User Type
-                      </InputLabel>
-                      <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value="fff"
-                        label="User Type"
-                        onChange={(event) => {
-                          handleUserTypeChange(event);
-                          handleChange(event);
-                        }}
-                        onBlur={handleBlur}
-                        name="user_type"
-                      >
-                        <MenuItem value={1}>Volunteer</MenuItem>
-                        <MenuItem value={2}>Organization</MenuItem>
-                      </Select>
-                    </FormControl> */}
-
                     <FormControl sx={{ width: '100%', mb: 3 }}>
                       <InputLabel id="demo-simple-select-label">User Type</InputLabel>
                       <Select

@@ -1,6 +1,6 @@
-import useAuth from "app/hooks/useAuth";
+import useAuth from 'app/hooks/useAuth';
 // import { flat } from 'app/utils/utils';
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, useLocation } from 'react-router-dom';
 // import AllPages from '../routes';
 
 // const userHasPermission = (pathname, user, routes) => {
@@ -34,7 +34,7 @@ const AuthGuard = ({ children }) => {
 
   return (
     <>
-      {true ? (
+      {authenticated ? (
         children
       ) : (
         <Navigate replace to="/session/signin" state={{ from: pathname }} />

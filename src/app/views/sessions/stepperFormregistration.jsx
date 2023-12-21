@@ -9,6 +9,8 @@ import { useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { Formik, useFormik } from 'formik';
+import { useNavigate } from 'react-router-dom';
+
 import {
   Card,
   Checkbox,
@@ -27,6 +29,7 @@ import {
   OutlinedInput,
 } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/lab';
+import useAuth from 'app/hooks/useAuth';
 const UserType = ['Orgnaization', 'Volunteer'];
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -618,18 +621,52 @@ function getStepContent(
           )}
         </>
       );
-    default:
-      return `Aenean arcu ligula, porttitor id neque imperdiet, congue convallis erat. Integer libero sapien, convallis a vulputate vel, pretium vulputate metus. Donec leo justo, viverra ut tempor commodo, laoreet eu velit. Donec vel sem quis velit pharetra elementum. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam in commodo mauris. Ut iaculis ipsum velit.`;
+    // default:
+    //   return `Aenean arcu ligula, porttitor id neque imperdiet, congue convallis erat. Integer libero sapien, convallis a vulputate vel, pretium vulputate metus. Donec leo justo, viverra ut tempor commodo, laoreet eu velit. Donec vel sem quis velit pharetra elementum. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam in commodo mauris. Ut iaculis ipsum velit.`;
   }
 }
 
-export default function StepperFormRegistration({ handleFormSubmit }) {
+export default function StepperFormRegistration() {
   const [activeStep, setActiveStep] = React.useState(0);
   const [personName, setPersonName] = useState([]);
   const [selectedUserType, setSelectedUserType] = useState('');
-
   const steps = getSteps();
 
+  const { register } = useAuth();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
+  const handleFormSubmit = async (values) => {
+    console.log('handleFormSubmit called ', values);
+    setLoading(true);
+    const payload = {
+      email: values?.target?.email,
+      password: values?.target?.password,
+      user_type: values?.target?.user_type,
+      email: '',
+      password: '',
+      fullname: '',
+      gender: '',
+      dob: '',
+      phone: '',
+      address: '',
+      city: '',
+      state: '',
+      zip: '',
+      skills: [],
+      volunteer_experience: '',
+      languages_spoken: '',
+      emergency_contact: '',
+      short_bio: '',
+    };
+    try {
+      await register(payload);
+      console.log('user login::::', values);
+      navigate('/');
+    } catch (e) {
+      setLoading(false);
+    }
+  };
   // inital login credentials
 
   const initialValues = {
@@ -684,25 +721,24 @@ export default function StepperFormRegistration({ handleFormSubmit }) {
   const handleBack = () => setActiveStep((prevActiveStep) => prevActiveStep - 1);
 
   const handleReset = () => setActiveStep(0);
-  const handleFinish = (e, values) => {
-    e.preventDefault();
-    // Trigger form submission logic
-    // handleSubmit();
-    // You can also access formik.values to get the form data
-    console.log('Form Data:', e, values);
-    // Call the provided handleSubmit function with form data
-    // handleSubmit(values);
-  };
 
   // const handleFormSubmit = async (values) => {
   //   values.preventDefault();
-  //   console.log("hhhhhhhhhhhhhhhhhhhhhhhh", values);
-  //   setLoading(true);
+  //   console.log('Registration:::: handle submit ', values);
+  //   // setLoading(true);
+
+  //   const organization = {
+  //     user_type: values.user_type,
+  //     email: values.email,
+  //   };
+
   //   try {
-  //     await (values.email, values.password);
-  //     navigate("/");
+  //     await register(organization);
+  //     // navigate('/');
+  //     console.log('register success');
   //   } catch (e) {
-  //     setLoading(false);
+  //     // setLoading(false);
+  //     console.log('error:::', e);
   //   }
   // };
 
@@ -733,17 +769,16 @@ export default function StepperFormRegistration({ handleFormSubmit }) {
           ) : (
             <>
               <Formik
-                // onSubmit={() => console.log('------->>>>bjjbjbjbb ')}
+                // onSubmit={handleFormSubmit}
                 initialValues={initialValues}
                 validationSchema={validationSchema}
               >
                 {({ values, errors, touched, handleChange, handleBlur, handleSubmit }) => (
                   <form
-                    method="POST"
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      console.log('------->> handle submit');
-                      handleSubmit();
+                    onSubmit={(values) => {
+                      values.preventDefault();
+                      // handleSubmit();
+                      handleFormSubmit(values);
                     }}
                   >
                     <Box>
