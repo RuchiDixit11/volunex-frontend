@@ -12,7 +12,7 @@ const Profile = Loadable(lazy(() => import('../Profile/profile')));
 const dashboardRoutes = [
   { path: '/dashboard/default', element: <Analytics />, auth: authRoles.admin },
   {
-    path: '/Organization/list',
+    path: '/organizations',
     element: <OrganizationList />,
     auth: authRoles.editor,
   },
@@ -22,7 +22,7 @@ const dashboardRoutes = [
     auth: authRoles.editor,
   },
   {
-    path: '/volunteer/list',
+    path: '/volunteers',
     element: <VolunteerList />,
     auth: authRoles.editor,
   },

@@ -142,11 +142,9 @@ const Campaigns = () => {
           justifyContent: 'end',
         }}
       >
-        {userType === '1' && (
-          <Button variant="outlined" onClick={handleClickOpen} sx={{ mb: 4 }}>
-            Create Campaigns
-          </Button>
-        )}
+        <Button variant="outlined" onClick={handleClickOpen} sx={{ mb: 4 }}>
+          Create Campaign
+        </Button>
       </div>
       <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
         <CardHeader>
@@ -216,7 +214,7 @@ const Campaigns = () => {
                         </Icon>
                       </IconButton>
                       <Button variant="outlined">
-                        <Link to={'/volunteer/list'}>Find Volunteers </Link>
+                        <Link to={'/volunteers'}>Find Volunteers </Link>
                       </Button>
 
                       {/* open dialog for delete campaigns */}
@@ -258,7 +256,7 @@ const Campaigns = () => {
         onClose={handleClose}
         aria-describedby="alert-dialog-slide-description"
       >
-        <DialogTitle>{'Create Campaigns'}</DialogTitle>
+        <DialogTitle>{'Create Campaign'}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
             <CreateCampaign handleClose={handleClose} />
