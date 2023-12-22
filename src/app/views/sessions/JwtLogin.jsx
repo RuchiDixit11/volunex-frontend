@@ -49,7 +49,7 @@ const JWTRoot = styled(JustifyBox)(() => ({
 
 // inital login credentials
 const initialValues = {
-  email: 'ak123@gmail.com',
+  email: '',
   password: '123456',
   remember: true,
   user_type: '1',
@@ -167,14 +167,14 @@ const JwtLogin = () => {
                         <Paragraph>Remember Me</Paragraph>
                       </FlexBox>
 
-                      <NavLink
+                      {/* <NavLink
                         to="/session/forgot-password"
                         style={{
                           color: theme.palette.primary.main,
                         }}
                       >
                         Forgot password?
-                      </NavLink>
+                      </NavLink> */}
                     </FlexBox>
 
                     <LoadingButton

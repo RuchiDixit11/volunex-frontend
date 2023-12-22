@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import {
   Avatar,
   Box,
@@ -27,6 +27,9 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import CreateCampaign from './CreateCampaign';
 import useAuth from 'app/hooks/useAuth';
+import fetch from 'cross-fetch';
+import { Link } from 'react-router-dom';
+import EditCampaign from './EditCampaign';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -84,14 +87,13 @@ const Campaigns = () => {
   const bgPrimary = palette.primary.main;
   const bgSecondary = palette.secondary.main;
   const [open, setOpen] = React.useState(false);
-
-  const [formData, setFormData] = React.useState({
-    org_id: '657afa9d2ab2dd6ae80b7683',
-    event_name: 'Earthquakes',
-    short_bio: 'Very bad disaster',
-    from_date: '05/01/2023',
-    to_date: '05/01/2023',
-  });
+  const [campaignsList, setCampaignList] = useState([]);
+  const { getRequest, deleteEvent } = useAuth();
+  const [openEditCampaign, setOpenEditCampaign] = useState(false);
+  const token = localStorage.getItem('disasterToken');
+  const orgId = localStorage.getItem('user_id');
+  const userType = localStorage.getItem('user_type');
+  const [openDeleteCampaign, setOpenDeleteCampaign] = useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -100,18 +102,34 @@ const Campaigns = () => {
   const handleClose = () => {
     setOpen(false);
   };
-  const { addEvent } = useAuth();
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const formDataObject = new FormData();
-    // Append each field to the FormData object
-    Object.keys(formData).forEach((key) => {
-      formDataObject.append(key, formData[key]);
-    });
-    const res = addEvent(formDataObject);
-    console.log('res::::: addd event ', res);
+  const handleCloseEditCampaign = () => {
+    setOpenEditCampaign(false);
   };
+
+  const handleDeleteCampaign = (event_id) => {
+    try {
+      deleteEvent(event_id);
+    } catch (error) {
+      return error;
+    }
+    setOpenDeleteCampaign(false);
+  };
+
+  React.useEffect(() => {
+    (async () => {
+      const response = await fetch(`http://localhost:3300/api/event/event_list?org_id=${orgId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          mode: 'no-cors',
+          'x-auth-token': `${token}`,
+        },
+      });
+      const { data } = await response.json();
+      setCampaignList(data);
+    })();
+  }, []);
 
   return (
     <Container>
@@ -124,18 +142,15 @@ const Campaigns = () => {
           justifyContent: 'end',
         }}
       >
-        <Button variant="outlined" onClick={handleClickOpen} sx={{ mb: 4 }}>
-          Create Campaigns
-        </Button>
+        {userType === '1' && (
+          <Button variant="outlined" onClick={handleClickOpen} sx={{ mb: 4 }}>
+            Create Campaigns
+          </Button>
+        )}
       </div>
       <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
         <CardHeader>
           <Title>Campaigns List</Title>
-          <Select size="small" defaultValue="swimming">
-            <MenuItem value="swimming">swimming </MenuItem>
-            <MenuItem value="runners ">runners </MenuItem>
-            <MenuItem value="Everest">Training for Everest</MenuItem>
-          </Select>
         </CardHeader>
 
         <Box overflow="auto">
@@ -146,54 +161,96 @@ const Campaigns = () => {
                   Campaigns Name
                 </TableCell>
                 <TableCell sx={{ px: 0 }} colSpan={2}>
-                  Organization
+                  Date
                 </TableCell>
-                <TableCell sx={{ px: 0 }} colSpan={2}>
-                  No of volunteer
-                </TableCell>
-                <TableCell sx={{ px: 0 }} colSpan={1}>
+                <TableCell sx={{ px: 3 }} colSpan={4}>
                   Action
                 </TableCell>
               </TableRow>
             </TableHead>
 
             <TableBody>
-              {productList.map((product, index) => (
-                <TableRow key={index} hover>
-                  <TableCell colSpan={4} align="left" sx={{ px: 0, textTransform: 'capitalize' }}>
-                    <Box display="flex" alignItems="center">
-                      <Avatar src={product.imgUrl} />
-                      <Paragraph sx={{ m: 0, ml: 4 }}>{product.name}</Paragraph>
-                    </Box>
-                  </TableCell>
+              {campaignsList &&
+                campaignsList?.map((cam, index) => (
+                  <TableRow key={index} hover>
+                    <TableCell colSpan={4} align="left" sx={{ px: 0, textTransform: 'capitalize' }}>
+                      <Box display="flex" alignItems="center">
+                        <Paragraph sx={{ m: 0, ml: 4 }}>{cam?.event_name}</Paragraph>
+                      </Box>
+                    </TableCell>
 
-                  <TableCell align="left" colSpan={2} sx={{ px: 0, textTransform: 'capitalize' }}>
-                    {product.skill > 999 ? (product.skill / 1000).toFixed(1) + '' : product.skill}
-                  </TableCell>
+                    <TableCell sx={{ px: 0 }} align="left" colSpan={2}>
+                      {cam?.from_date}
+                    </TableCell>
 
-                  <TableCell sx={{ px: 0 }} align="left" colSpan={2}>
-                    {product.location ? (
-                      product.location < 20 ? (
-                        <Small bgcolor={bgSecondary}>{product.location} location</Small>
-                      ) : (
-                        <Small bgcolor={bgPrimary}>in stock</Small>
-                      )
-                    ) : (
-                      <Small bgcolor={bgError}>out of stock</Small>
-                    )}
-                  </TableCell>
+                    <TableCell sx={{ px: 3 }} colSpan={4}>
+                      <IconButton>
+                        <Icon color="primary" onClick={() => setOpenEditCampaign(true)}>
+                          edit
+                        </Icon>
+                      </IconButton>
 
-                  <TableCell sx={{ px: 0 }} colSpan={1}>
-                    <IconButton>
-                      <Icon color="primary">edit</Icon>
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
+                      {/* open dialog for edit campaigns */}
+
+                      <Dialog
+                        open={openEditCampaign}
+                        TransitionComponent={Transition}
+                        keepMounted
+                        onClose={handleCloseEditCampaign}
+                        aria-describedby="alert-dialog-slide-description"
+                      >
+                        <DialogTitle>{'Edit Campaigns'}</DialogTitle>
+                        <DialogContent>
+                          <DialogContentText id="alert-dialog-slide-description">
+                            <EditCampaign
+                              eventId={cam?._id}
+                              handleClose={handleCloseEditCampaign}
+                            />
+                          </DialogContentText>
+                        </DialogContent>
+                      </Dialog>
+
+                      <IconButton>
+                        <Icon color="primary" onClick={() => setOpenDeleteCampaign(true)}>
+                          remove
+                        </Icon>
+                      </IconButton>
+                      <Button variant="outlined">
+                        <Link to={'/volunteer/list'}>Find Volunteers </Link>
+                      </Button>
+
+                      {/* open dialog for delete campaigns */}
+
+                      <Dialog
+                        open={openDeleteCampaign}
+                        TransitionComponent={Transition}
+                        keepMounted
+                        onClose={() => setOpenDeleteCampaign(false)}
+                        aria-describedby="alert-dialog-slide-description"
+                      >
+                        <DialogTitle>{'Delete Campaigns'}</DialogTitle>
+                        <DialogContent>
+                          <DialogContentText id="alert-dialog-slide-description">
+                            Do you want to delete the campaign ?
+                          </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                          <Button onClick={() => setOpenDeleteCampaign(false)} color="primary">
+                            Disagree
+                          </Button>
+                          <Button onClick={() => handleDeleteCampaign(cam?._id)} color="primary">
+                            Agree
+                          </Button>
+                        </DialogActions>
+                      </Dialog>
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </ProductTable>
         </Box>
       </Card>
+      {/* Open dialog for create campaigns */}
       <Dialog
         open={open}
         TransitionComponent={Transition}
@@ -201,20 +258,12 @@ const Campaigns = () => {
         onClose={handleClose}
         aria-describedby="alert-dialog-slide-description"
       >
-        <form onSubmit={handleSubmit}>
-          <DialogTitle>{'Create Campaigns'}</DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-slide-description">
-              <CreateCampaign />
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
-            <Button type="submit" onClick={handleClose}>
-              Create
-            </Button>
-          </DialogActions>
-        </form>
+        <DialogTitle>{'Create Campaigns'}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-slide-description">
+            <CreateCampaign handleClose={handleClose} />
+          </DialogContentText>
+        </DialogContent>
       </Dialog>
     </Container>
   );

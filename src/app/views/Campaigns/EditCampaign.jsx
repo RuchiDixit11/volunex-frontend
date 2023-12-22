@@ -14,9 +14,9 @@ const TextField = styled(TextValidator)(() => ({
   marginBottom: '16px',
 }));
 
-const CreateCampaign = ({ handleClose }) => {
+const EditCampaign = ({ handleClose, eventId }) => {
   const [state, setState] = useState({ date: new Date() });
-  const { addEvent } = useAuth();
+  const { editEvent } = useAuth();
   const [selectedEndDate, setSelectedEndDate] = useState(new Date('2014-08-18T21:11:54'));
   const [selectedFromDate, setSelectedFromDate] = useState(new Date('2014-08-18T21:11:54'));
 
@@ -34,14 +34,16 @@ const CreateCampaign = ({ handleClose }) => {
 
   const handleFormSubmit = async (values) => {
     console.log('res::::: submit', values);
+
+    formDataObject.append('event_id', eventId);
     formDataObject.append('org_id', orgId); // '65843d2d5cb75b6b569dbdb9'
     formDataObject.append('event_name', values.event_name);
     formDataObject.append('short_bio', values.short_bio);
-    formDataObject.append('to_date', values.to_date);
     formDataObject.append('from_date', values.from_date);
+    formDataObject.append('to_date', values.to_date);
     try {
       console.log('FormData ::::', formDataObject);
-      const res = addEvent(formDataObject);
+      const res = editEvent(formDataObject);
       console.log('res::::: addd event ', res);
       handleClose();
       return res;
@@ -60,7 +62,9 @@ const CreateCampaign = ({ handleClose }) => {
   };
 
   const validationSchema = Yup.object().shape({
-    event_name: Yup.string().required('Event is required!'),
+    event_name: Yup.string()
+      .min(6, 'Event name must be 6 character length')
+      .required('Password is required!'),
     short_bio: Yup.string().required('Short bio is required!'),
   });
 
@@ -82,8 +86,8 @@ const CreateCampaign = ({ handleClose }) => {
                     id="standard-basic"
                     onChange={handleChange}
                     errorMessages={['this field is required']}
-                    label="Event Name"
-                    validators={['required']}
+                    label="Event Name (Min length 4, Max length 9)"
+                    validators={['required', 'minStringLength: 4', 'maxStringLength: 9']}
                     variant="outlined"
                     onBlur={handleBlur}
                     value={values.event_name}
@@ -170,10 +174,12 @@ const CreateCampaign = ({ handleClose }) => {
                     />
                   </LocalizationProvider>
                 </Grid>
-                <Grid item sx={{ mt: 2 }}>
-                  <Button onClick={handleClose}>Cancel</Button>
-                  <Button type="submit" onClick={handleSubmit}>
-                    Create
+                <Grid item sx={{ mt: 2, gap: 3 }}>
+                  <Button variant="contained" onClick={handleClose}>
+                    Cancel
+                  </Button>
+                  <Button type="submit" variant="contained" onClick={handleSubmit}>
+                    Save Changes
                   </Button>
                 </Grid>
               </Grid>
@@ -185,4 +191,4 @@ const CreateCampaign = ({ handleClose }) => {
   );
 };
 
-export default CreateCampaign;
+export default EditCampaign;

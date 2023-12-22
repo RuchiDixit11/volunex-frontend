@@ -1,6 +1,6 @@
 import { Avatar, Hidden, Icon, IconButton, MenuItem, useMediaQuery } from '@mui/material';
 import { Box, styled, useTheme } from '@mui/system';
-import { MatxMenu, MatxSearchBox } from 'app/components';
+import { ChatHead, Chatbox, MatxMenu, MatxSearchBox } from 'app/components';
 import { themeShadows } from 'app/components/MatxTheme/themeColors';
 import { NotificationProvider } from 'app/contexts/NotificationContext';
 import useAuth from 'app/hooks/useAuth';
@@ -10,7 +10,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Span } from '../../../components/Typography';
 import NotificationBar from '../../NotificationBar/NotificationBar';
-import ShoppingCart from '../../ShoppingCart';
 
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
   color: theme.palette.text.primary,
@@ -92,7 +91,8 @@ const Layout1Topbar = () => {
     }
     updateSidebarMode({ mode });
   };
-
+  const { palette } = useTheme();
+  const textColor = palette.primary.contrastText;
   return (
     <TopbarRoot>
       <TopbarContainer>
@@ -100,31 +100,23 @@ const Layout1Topbar = () => {
           <StyledIconButton onClick={handleSidebarToggle}>
             <Icon>menu</Icon>
           </StyledIconButton>
-
-          <IconBox>
-            <StyledIconButton>
-              <Icon>mail_outline</Icon>
-            </StyledIconButton>
-
-            <StyledIconButton>
-              <Icon>web_asset</Icon>
-            </StyledIconButton>
-
-            <StyledIconButton>
-              <Icon>star_outline</Icon>
-            </StyledIconButton>
-          </IconBox>
         </Box>
 
         <Box display="flex" alignItems="center">
           <MatxSearchBox />
-
           <NotificationProvider>
             <NotificationBar />
           </NotificationProvider>
-
-          <ShoppingCart />
-
+          <ChatHead
+            icon={
+              <IconButton sx={{ my: '12px', color: textColor }} size="small">
+                <Icon>comments</Icon>
+              </IconButton>
+            }
+          >
+            <Chatbox />
+          </ChatHead>
+          {/* <ShoppingCart /> */}
           <MatxMenu
             menuButton={
               <UserMenu>

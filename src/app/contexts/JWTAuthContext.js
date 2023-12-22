@@ -19,9 +19,13 @@ const isValidToken = (accessToken) => {
   return decodedToken.exp > currentTime;
 };
 
-const setSession = (accessToken) => {
+const setSession = (accessToken, data) => {
+  console.log(data, 'dataa set');
   if (accessToken) {
     localStorage.setItem('disasterToken', accessToken);
+    localStorage.setItem('user_id', data?._id);
+    localStorage.setItem('user_type', data?.user_type);
+    localStorage.setItem('userdata', data);
     axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
   } else {
     localStorage.removeItem('disasterToken');
@@ -58,12 +62,10 @@ const reducer = (state, action) => {
       };
     }
     case 'REGISTER': {
-      const { user } = action.payload;
-
       return {
         ...state,
-        isAuthenticated: true,
-        user,
+        isAuthenticated: false,
+        user: null,
       };
     }
     case 'GET_REQUEST': {
@@ -86,13 +88,16 @@ const AuthContext = createContext({
   register: () => Promise.resolve(),
   getRequest: () => Promise.resolve(),
   addEvent: () => Promise.resolve(),
+  editEvent: () => Promise.resolve(),
+  sendRequest: () => Promise.resolve(),
+  getCampaigns: () => Promise.resolve(),
 });
 
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const login = async (email, password, user_type) => {
-    const response = await axios.post('http://localhost:3300/api/auth/login', {
+    const response = await axios.post('http://103.186.184.179:3010/api/auth/login', {
       email,
       password,
       user_type,
@@ -100,8 +105,7 @@ export const AuthProvider = ({ children }) => {
 
     const { token, data } = response.data;
     console.log('token received', token, 'data::::', data);
-    // localStorage.setItem('token', token);
-    setSession(token);
+    setSession(token, data);
 
     dispatch({
       type: 'LOGIN',
@@ -112,8 +116,6 @@ export const AuthProvider = ({ children }) => {
   };
 
   const getRequest = async () => {
-    // const token =
-    //   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjU4MWY0MGE1NDk2OGU4NzZhZjVmNjIyIn0sImlhdCI6MTcwMzEyNTQwNSwiZXhwIjoxNzAzMTMzODA1fQ.9qGp6emm1w7ErhETY8RLRTSiOxhexhWVyLecYCCQ_1s';
     const token = localStorage.getItem('disasterToken');
 
     const response = await axios.get('http://localhost:3300/api/user/filters', {
@@ -134,38 +136,30 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
-  const register = async (
-    // email, username, password
-    // user_type,
-    // email,
-    // password,
-    // fullname,
-    // gender,
-    // dob,
-    // phone,
-    // address,
-    // city,
-    // state,
-    // zip,
-    // skills,
-    // volunteer_experience,
-    // languages_spoken,
-    // emergency_contact,
-    // short_bio
-    payload
-  ) => {
-    const response = await axios.post('http://localhost:3300/api/auth/signup', payload);
+  const getCampaigns = async () => {
+    const token = localStorage.getItem('disasterToken');
+    const orgId = localStorage.getItem('user_id');
+    const response = await axios.get(`http://localhost:3300/api/event/event_list?org_id=${orgId}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        'x-auth-token': `${token}`,
+      },
+    });
+    const { data } = await response.json();
+    console.log(data, '-----data----');
+
+    dispatch({
+      type: 'GET_CAMPAIGNS',
+      // payload: {
+      //   user,
+      // },
+    });
+  };
+
+  const register = async (payload) => {
+    const response = await axios.post('http://103.186.184.179:3010/api/auth/signup', payload);
     console.log(response, 'response sigup ');
-    // const { accessToken, user } = response.data;
-
-    // setSession(accessToken);
-
-    // dispatch({
-    //   type: 'REGISTER',
-    //   payload: {
-    //     user,
-    //   },
-    // });
   };
 
   const logout = () => {
@@ -175,30 +169,66 @@ export const AuthProvider = ({ children }) => {
 
   const addEvent = async (payload) => {
     const token = localStorage.getItem('disasterToken');
-    const response = await axios.post('http://localhost:3300/api/user/add_event', payload, {
+    const response = await axios.post('http://localhost:3300/api/event/add_event', payload, {
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
         'x-auth-token': `${token}`,
       },
     });
-    console.log(response, 'response sigup ');
-    // const { accessToken, user } = response.data;
     return response;
-    // setSession(accessToken);
+  };
 
-    // dispatch({
-    //   type: 'ADD_EVENT',
-    //   payload: {
-    //     user,
-    //   },
-    // });
+  const sendRequest = async (payload) => {
+    const token = localStorage.getItem('disasterToken');
+    const response = await axios.post(
+      'http://103.186.184.179:3010/api/user/send_notification',
+      payload,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          'x-auth-token': `${token}`,
+        },
+      }
+    );
+
+    return response;
+  };
+
+  const editEvent = async (payload) => {
+    const token = localStorage.getItem('disasterToken');
+    const response = await axios.patch(`http://localhost:3300/api/event/event_update`, payload, {
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        'x-auth-token': `${token}`,
+      },
+    });
+    console.log(response, 'response');
+    return response;
+  };
+
+  const deleteEvent = async (event_id) => {
+    const token = localStorage.getItem('disasterToken');
+    const response = await axios.delete(
+      `http://localhost:3300/api/event/delete_event/${event_id}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          'x-auth-token': `${token}`,
+        },
+      }
+    );
+    console.log(response, 'response');
+    return response;
   };
 
   useEffect(() => {
     (async () => {
       try {
-        const accessToken = window.localStorage.getItem('accessToken');
+        const accessToken = window.localStorage.getItem('disasterToken');
 
         if (accessToken && isValidToken(accessToken)) {
           setSession(accessToken);
@@ -248,6 +278,10 @@ export const AuthProvider = ({ children }) => {
         register,
         getRequest,
         addEvent,
+        editEvent,
+        deleteEvent,
+        sendRequest,
+        getCampaigns,
       }}
     >
       {children}

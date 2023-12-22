@@ -94,35 +94,6 @@ const OrganizationList = () => {
     return new Promise((resolve) => setTimeout(resolve, delay));
   }
   const token = localStorage.getItem('disasterToken');
-  useEffect(() => {
-    (async () => {
-      console.log('disasterToken', token);
-      const response = await fetch(
-        'http://localhost:3300/api/event/event_list?org_id=657afa9d2ab2dd6ae80b76e1',
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            mode: 'no-cors',
-            'x-auth-token': `${token}`,
-            // 'x-auth-token':
-            //   'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjU3OWFiZTQ0NDNmYmNmOGE0ZmIzZjE0In0sImlhdCI6MTcwMjQ3NzE4OSwiZXhwIjoxNzAyNDg1NTg5fQ.4uTAF9w0wRGUgN2G-uSMTymwRkDLUKEr8aBfIeZmy4w',
-          },
-        }
-      );
-      await sleep(3000); // For demo purposes.
-      const countries = await response.json();
-      console.log('REsssss: ' + countries);
-      // if (active) {
-      //   setOptions(Object.keys(countries).map((key) => countries[key].item[0]));
-      // }
-    })();
-
-    return () => {
-      console.log('Active false');
-      // active = false;
-    };
-  }, []);
 
   // -----------
   return (

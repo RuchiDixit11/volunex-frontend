@@ -141,16 +141,7 @@ const JwtRegister = () => {
         <Grid container>
           <Box p={4} height="100%">
             <Grid container spacing={2}>
-              <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
-                <ContentBox>
-                  <img
-                    width="100%"
-                    alt="Register"
-                    src="/assets/images/illustrations/posting_photo.svg"
-                  />
-                </ContentBox>
-              </Grid>
-              <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
+              <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
                 <h2 style={{ textAlign: 'center' }}>Sign Up </h2>
                 <StepperFormRegistration />
               </Grid>
