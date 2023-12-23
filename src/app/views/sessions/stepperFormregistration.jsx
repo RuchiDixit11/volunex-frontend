@@ -1,16 +1,10 @@
 import * as Yup from 'yup';
 import Button from '@mui/material/Button';
-import Step from '@mui/material/Step';
-import StepLabel from '@mui/material/StepLabel';
-import Stepper from '@mui/material/Stepper';
-import Typography from '@mui/material/Typography';
 import React from 'react';
 import { useState } from 'react';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { Formik, useFormik } from 'formik';
 import {
-  Card,
-  Checkbox,
   FormControlLabel,
   FormLabel,
   Grid,
@@ -26,7 +20,8 @@ import {
   OutlinedInput,
 } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/lab';
-const UserType = ['Orgnaization', 'Volunteer'];
+import useAuth from 'app/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -39,12 +34,10 @@ const MenuProps = {
 };
 const names = ['Swimmer', 'Web', 'Event Planning', 'Ralph Hubbard', 'Omar Alexander'];
 
-function getSteps() {
-  return [''];
-}
-
 export default function StepperFormRegistration({ handleFormSubmit }) {
   const [selectedUserType, setSelectedUserType] = useState('');
+  const { register } = useAuth();
+  const navigate = useNavigate();
 
   // inital login credentials
   const orgInitialValues = {
@@ -84,7 +77,22 @@ export default function StepperFormRegistration({ handleFormSubmit }) {
   };
 
   // form field validation schema
-  const validationSchema = Yup.object().shape({
+  const orgValidationSchema = Yup.object().shape({
+    organization_name: Yup.string().required('Name is required!'),
+    organization_type: Yup.string().required('Type is required!'),
+    organization_address: Yup.string().required('Address is required!'),
+    organization_city: Yup.string().required('City is required!'),
+    organization_state: Yup.string().required('State is required!'),
+    organization_zip: Yup.string().required('Zip is required!'),
+    organization_phone: Yup.string().required('Phone is required!'),
+    organization_mission: Yup.string().required('Mission is required!'),
+    organization_year_founded: Yup.string().required('Year founded is required!'),
+    organization_employees: Yup.string().required('Employees is required!'),
+    organization_focusarea: Yup.string().required('Focusarea is required!'),
+    organization_supports: Yup.string().required('Supports is required!'),
+  });
+
+  const userValidationSchema = Yup.object().shape({
     // password: Yup.string()
     //   .min(6, 'Password must be 6 character length')
     //   .required('Password is required!'),
@@ -105,40 +113,32 @@ export default function StepperFormRegistration({ handleFormSubmit }) {
     languages_spoken: Yup.string().required('Languages spoken is required!'),
     emergency_contact: Yup.string().required('Emergency contact is required!'),
     short_bio: Yup.string().required('Short bio is required!'),
-    organization_name: Yup.string().required('Name is required!'),
-    organization_type: Yup.string().required('Type is required!'),
-    organization_address: Yup.string().required('Address is required!'),
-    organization_city: Yup.string().required('City is required!'),
-    organization_state: Yup.string().required('State is required!'),
-    organization_zip: Yup.string().required('Zip is required!'),
-    organization_phone: Yup.string().required('Phone is required!'),
-    organization_mission: Yup.string().required('Mission is required!'),
-    organization_year_founded: Yup.string().required('Year founded is required!'),
-    organization_employees: Yup.string().required('Employees is required!'),
-    organization_focusarea: Yup.string().required('Focusarea is required!'),
-    organization_supports: Yup.string().required('Supports is required!'),
   });
 
-  const initialValues = {};
-  const handleFinish = (values) => {
+  const handleFinish = async (values) => {
     // e.preventDefault();
     console.log('Form Data:', values);
+    const res = await register(values);
+    console.log(res, '------resss');
+    if (res) {
+      navigate('/session/signin');
+    }
   };
 
   const handleUserTypeChange = (event) => {
-    const selectedUserType = event.target.value;
-    console.log('Selected User Type:', selectedUserType);
+    setSelectedUserType(event.target.value);
   };
+
   return (
     <>
       <Box>
         <Box mt={4}>
           <Formik
             onSubmit={handleFinish}
-            initialValues={initialValues}
-            validationSchema={validationSchema}
+            initialValues={selectedUserType == '1' ? orgInitialValues : volunteerinitialValues}
+            validationSchema={selectedUserType == '1' ? orgValidationSchema : userValidationSchema}
           >
-            {({ values, errors, touched, handleChange, handleBlur, handleSubmit }) => (
+            {({ values, errors, touched, handleChange, handleBlur, handleSubmit, resetForm }) => (
               <form onSubmit={handleSubmit}>
                 <Box>
                   {console.log(errors, '------------->>> errors')}
@@ -152,7 +152,9 @@ export default function StepperFormRegistration({ handleFormSubmit }) {
                           value={values.user_type}
                           label="User Type"
                           onChange={(e) => {
+                            resetForm();
                             handleChange(e);
+
                             handleUserTypeChange(e);
                           }}
                           onBlur={handleBlur}
@@ -317,20 +319,30 @@ export default function StepperFormRegistration({ handleFormSubmit }) {
                           </Grid>
                           <Grid item lg={6} md={6} sm={12} xs={12}>
                             <FormControl sx={{ width: '100%', mb: 1 }}>
-                              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                              {/* <LocalizationProvider dateAdapter={AdapterDateFns}>
                                 <DatePicker
                                   value={values.dob}
+                                  name={'dob'}
                                   onChange={handleChange} //{handleDateChange}
-                                  renderInput={() => (
-                                    <TextField
-                                      //   {...props}
-                                      label="date of Birth"
-                                      id="mui-pickers-date"
-                                      sx={{ mb: 2, width: '100%' }}
-                                    />
-                                  )}
+                                  renderInput={() => ( */}
+                              <TextField
+                                value={values.dob}
+                                name={'dob'}
+                                onChange={handleChange}
+                                validators={['required']}
+                                errorMessages={['this field is required']}
+                                variant="outlined"
+                                onBlur={handleBlur}
+                                helperText={touched.dob && errors.dob}
+                                error={Boolean(errors.dob && touched.dob)}
+                                //   {...props}
+                                label="date of Birth"
+                                id="mui-pickers-date"
+                                sx={{ mb: 2, width: '100%' }}
+                              />
+                              {/* )}
                                 />
-                              </LocalizationProvider>
+                              </LocalizationProvider> */}
                             </FormControl>
                           </Grid>
                           <Grid item lg={6} md={6} sm={12} xs={12}>
@@ -357,9 +369,9 @@ export default function StepperFormRegistration({ handleFormSubmit }) {
                               <Select
                                 labelId="demo-multiple-name-label"
                                 id="demo-multiple-name"
-                                multiple
                                 value={values.skills}
                                 onChange={handleChange}
+                                name="skills"
                                 input={<OutlinedInput label="Select skills" />}
                                 MenuProps={MenuProps}
                               >
