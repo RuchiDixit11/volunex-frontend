@@ -3,22 +3,22 @@ export const navigations = [
   {
     name: 'Organizations',
     path: '/organizations',
-    icon: 'dashboard',
+    icon: 'widgets',
   },
   {
     name: 'Volunteers',
     path: '/volunteers',
-    icon: 'dashboard',
+    icon: 'people',
   },
   {
     name: 'Campaigns',
     path: '/campaigns',
-    icon: 'dashboard',
+    icon: 'campaigns',
   },
   {
     name: 'Profile',
     path: '/profile',
-    icon: 'dashboard',
+    icon: 'person',
   },
   // { label: 'PAGES', type: 'label' },
   // {

@@ -215,6 +215,7 @@ export const AuthProvider = ({ children }) => {
   const register = async (payload) => {
     const response = await axios.post(`${base_url}/api/auth/signup`, payload);
     console.log(response, 'response sigup ');
+    return response;
   };
 
   const logout = () => {
@@ -282,8 +283,10 @@ export const AuthProvider = ({ children }) => {
         'x-auth-token': `${token}`,
       },
     });
-    console.log(response, 'response');
-    return response;
+    const data = response;
+
+    console.log(data, 'fffff searchVolunteer');
+    return data;
   };
 
   useEffect(() => {

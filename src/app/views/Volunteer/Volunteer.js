@@ -75,6 +75,7 @@ const VolunteerList = () => {
   const bgPrimary = palette.primary.main;
   const bgSecondary = palette.secondary.main;
   const [filteredData, setFilteredData] = useState([]);
+  const [volData, setVolData] = useState([]);
   const [selectedItemId, setSelectedItemId] = useState('1');
   const token = localStorage.getItem('disasterToken');
   const [isChecked, setIsChecked] = useState(false);
@@ -86,21 +87,23 @@ const VolunteerList = () => {
     setIsChecked(event.target.checked);
   };
 
+  const filtereApi = async () => {
+    const response = await searchVolunteer(selectedItemId);
+    const { data, msg } = response;
+
+    setFilteredData(data.data);
+  };
+
   const handleChange = async (event) => {
     console.log('eveeed: handleChange', event.target.value);
     setSelectedItemId(event.target.value);
-
-    try {
-      const response = searchVolunteer(event.target.value);
-      const { data, msg } = await response.json();
-      console.log('response :::::', response.json(), 'data ::', data);
-      setFilteredData(data?.data);
-      console.log('filtered dataa:www ' + data);
-    } catch (e) {
-      console.log('error', e);
-    }
   };
 
+  useEffect(() => {
+    if (!!selectedItemId.length) {
+      filtereApi();
+    }
+  }, [selectedItemId]);
   const handleSendRequest = async (v_id, message, setOpenCampaignMessage) => {
     const orgId = localStorage.getItem('user_id');
     const payload = {
@@ -128,14 +131,11 @@ const VolunteerList = () => {
     setOpenCampaignMessage(false);
   };
 
-  const [volData, setVolData] = useState([]);
-
   const getAllVolunteers = async () => {
     try {
       const res = await getVolunteerList();
       console.log(' getVolunteerList :::::::', res);
       const { data } = res;
-      // setVolData(data);
       setFilteredData(data);
     } catch (error) {
       return error;
@@ -145,7 +145,8 @@ const VolunteerList = () => {
   useEffect(() => {
     getAllVolunteers();
   }, []);
-  console.log('data getVolunteerList  ', volData);
+
+  console.log('filteredData  ', filteredData);
 
   // const getAllVolunteers = async () => {
   //   try {

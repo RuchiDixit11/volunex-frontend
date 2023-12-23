@@ -66,7 +66,6 @@ function getComparator(order, orderBy) {
 // only support modern browsers you can replace stableSort(exampleArray, exampleComparator)
 // with exampleArray.slice().sort(exampleComparator)
 function stableSort(array, comparator) {
-  console.log('arrrraaayyy', array, 'comparator', comparator);
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
@@ -201,6 +200,9 @@ EnhancedTableToolbar.propTypes = {
 };
 
 function EnhancedTable({ data, handleSendRequest }) {
+  console.log(data, 'filterddddd data  ');
+  const [dataFilter, setFilteredData] = React.useState(data);
+  console.log('hjgsjh');
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
   const [selected, setSelected] = React.useState([]);
@@ -210,22 +212,23 @@ function EnhancedTable({ data, handleSendRequest }) {
   const [rows, setRows] = React.useState([]);
   const [notificationMessage, setNotificationMessage] = React.useState('');
 
-  console.log(data, 'data on enhanced');
   const [openCampaignMessage, setOpenCampaignMessage] = React.useState(false);
 
-  const CreateTableData = () =>
+  const CreateTableData = () => {
+    console.log('dataFilter :::', dataFilter);
     data?.map((item) => {
-      console.log('Creating table', item);
       const data = createData(item._id, item.fullname, item.volunteer_experience, item.address);
-      console.log('Creating table', item, 'created', data);
+      console.log('data ::: created', data);
       return setRows((prevItem) => [...prevItem, data]);
     });
+  };
 
   React.useEffect(() => {
+    console.log('update state:::');
     CreateTableData();
+    // setFilteredData(rows);
   }, [data]);
 
-  console.log('rows :::', rows);
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -242,7 +245,6 @@ function EnhancedTable({ data, handleSendRequest }) {
   };
 
   const handleClick = (event, id) => {
-    console.log('handleClick :::', event, id);
     const selectedIndex = selected.indexOf(id);
     let newSelected = [];
 
@@ -260,8 +262,6 @@ function EnhancedTable({ data, handleSendRequest }) {
     }
     setSelected(newSelected);
   };
-
-  console.log('selected ::::', selected);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -289,7 +289,8 @@ function EnhancedTable({ data, handleSendRequest }) {
       ),
     [order, orderBy, page, rowsPerPage]
   );
-  console.log('visibleRows ', visibleRows);
+
+  console.log('rows fileter ', rows);
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
@@ -309,10 +310,8 @@ function EnhancedTable({ data, handleSendRequest }) {
               rowCount={rows.length}
             />
             <TableBody>
-              {console.log(rows, 'rows in table ')}
               {rows?.length > 0 &&
                 rows?.map((row, index) => {
-                  console.log('row ::: in table', row);
                   const isItemSelected = isSelected(row?.id);
                   const labelId = `enhanced-table-checkbox-${index}`;
 

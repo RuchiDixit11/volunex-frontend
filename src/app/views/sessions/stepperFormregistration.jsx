@@ -41,6 +41,8 @@ export default function StepperFormRegistration({ handleFormSubmit }) {
 
   // inital login credentials
   const orgInitialValues = {
+    email: '',
+    password: '',
     organization_name: '',
     organization_type: '',
     organization_address: '',
@@ -78,6 +80,9 @@ export default function StepperFormRegistration({ handleFormSubmit }) {
 
   // form field validation schema
   const orgValidationSchema = Yup.object().shape({
+    email: Yup.string().required('Email is required!'),
+    password: Yup.string().required('Password is required!'),
+    organization_id: Yup.string().required('ID is required!'),
     organization_name: Yup.string().required('Name is required!'),
     organization_type: Yup.string().required('Type is required!'),
     organization_address: Yup.string().required('Address is required!'),
@@ -120,7 +125,7 @@ export default function StepperFormRegistration({ handleFormSubmit }) {
     console.log('Form Data:', values);
     const res = await register(values);
     console.log(res, '------resss');
-    if (res) {
+    if (res?.status == 200) {
       navigate('/session/signin');
     }
   };
@@ -481,11 +486,64 @@ export default function StepperFormRegistration({ handleFormSubmit }) {
                               errorMessages={['this field is required']}
                               variant="outlined"
                               onBlur={handleBlur}
-                              helperText={touched.organization_name && errors.organization_name}
-                              error={Boolean(errors.organization_name && touched.organization_name)}
+                              // helperText={touched.organization_name && errors.organization_name}
+                              // error={Boolean(errors.organization_name && touched.organization_name)}
                               sx={{ mb: 3 }}
                             />
                           </Grid>
+
+                          <Grid item lg={6} md={6} sm={12} xs={12}>
+                            <TextField
+                              fullWidth
+                              size="full"
+                              type="email"
+                              name="email"
+                              label="email"
+                              variant="outlined"
+                              onBlur={handleBlur}
+                              value={values.email}
+                              onChange={handleChange}
+                              helperText={touched.email && errors.email}
+                              error={Boolean(errors.email && touched.email)}
+                              sx={{ mb: 3 }}
+                            />
+                          </Grid>
+                          <Grid item lg={6} md={6} sm={12} xs={12}>
+                            <TextField
+                              fullWidth
+                              size="full"
+                              name="password"
+                              type="password"
+                              label="Password"
+                              variant="outlined"
+                              onBlur={handleBlur}
+                              value={values.password}
+                              onChange={handleChange}
+                              helperText={touched.password && errors.password}
+                              error={Boolean(errors.password && touched.password)}
+                              sx={{ mb: 3 }}
+                            />
+                          </Grid>
+
+                          <Grid item lg={6} md={6} sm={12} xs={12}>
+                            <TextField
+                              fullWidth
+                              size="full"
+                              type="text"
+                              name="organization_id"
+                              value={values.organization_id || ''}
+                              label="ID"
+                              onChange={handleChange}
+                              validators={['required']}
+                              errorMessages={['this field is required']}
+                              variant="outlined"
+                              onBlur={handleBlur}
+                              helperText={touched.organization_id && errors.organization_id}
+                              error={Boolean(errors.organization_id && touched.organization_id)}
+                              sx={{ mb: 3 }}
+                            />
+                          </Grid>
+
                           <Grid item lg={6} md={6} sm={12} xs={12}>
                             <TextField
                               fullWidth
