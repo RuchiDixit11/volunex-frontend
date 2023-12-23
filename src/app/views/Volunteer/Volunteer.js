@@ -78,7 +78,7 @@ const VolunteerList = () => {
   const [selectedItemId, setSelectedItemId] = useState('1');
   const token = localStorage.getItem('disasterToken');
   const [isChecked, setIsChecked] = useState(false);
-  const { sendRequest } = useAuth();
+  const { sendRequest, getVolunteerList, searchVolunteer } = useAuth();
 
   const handleIsChecked = (name) => (event) => {
     console.log('Checking ', name);
@@ -91,20 +91,22 @@ const VolunteerList = () => {
     setSelectedItemId(event.target.value);
 
     try {
-      const response = await fetch(
-        `http://localhost:3300/api/user/filters?skill_id=${event.target.value}`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            mode: 'no-cors',
-            'x-auth-token': `${token}`,
-          },
-        }
-      );
+      const response = searchVolunteer(event.target.value);
+      // await fetch(
+      //   `http://103.186.184.179:3010/api/user/filters?skill_id=${event.target.value}`,
+      //   {
+      //     headers: {
+      //       'Content-Type': 'application/json',
+      //       Accept: 'application/json',
+      //       mode: 'no-cors',
+      //       'x-auth-token': `${token}`,
+      //     },
+      //   }
+      // );
       const { data, msg } = await response.json();
-      setFilteredData(data);
-      console.log('filtered dataa: ' + data);
+      console.log('response :::::', response.json(), 'data ::', data);
+      setFilteredData(data?.data);
+      console.log('filtered dataa:www ' + data);
     } catch (e) {
       console.log('error', e);
     }
@@ -134,7 +136,42 @@ const VolunteerList = () => {
     } catch (e) {
       console.log('error', e);
     }
+    setOpenCampaignMessage(false);
   };
+
+  const [volData, setVolData] = useState([]);
+
+  const getAllVolunteers = async () => {
+    try {
+      const res = await getVolunteerList();
+      console.log(' getVolunteerList :::::::', res);
+      const { data } = res;
+      // setVolData(data);
+      setFilteredData(data);
+    } catch (error) {
+      return error;
+    }
+  };
+
+  useEffect(() => {
+    getAllVolunteers();
+  }, []);
+  console.log('data getVolunteerList  ', volData);
+
+  // const getAllVolunteers = async () => {
+  //   try {
+  //     const res = await getVolunteerList();
+  //     console.log(res, 'ffffffffff');
+  //     const data = await res.json();
+  //     console.log('getVolunteerList :::::', res, 'hghghjjh', data);
+  //   } catch (error) {
+  //     return error;
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   getAllVolunteers();
+  // }, []);
 
   console.log('filteredData :::::', filteredData);
   return (
@@ -159,45 +196,8 @@ const VolunteerList = () => {
         </CardHeader>
         <EnhancedTable handleSendRequest={handleSendRequest} data={filteredData} />
       </Card>
-
-      {/* <Button onClick={handleSendRequest} align="right" variant="outlined">
-        Send Request
-      </Button> */}
     </Container>
   );
 };
-
-const productList = [
-  {
-    imgUrl: 'account_circle',
-    name: 'earphone',
-    skill: 'Runner',
-    location: 'Indore',
-  },
-  {
-    imgUrl: 'account_circle',
-    name: 'earphone',
-    skill: 'Runner',
-    location: 'Delhi',
-  },
-  {
-    imgUrl: 'account_circle',
-    name: 'iPhone x',
-    skill: 'Runner',
-    location: 'Mumbai',
-  },
-  {
-    imgUrl: 'account_circle',
-    name: 'iPhone x',
-    skill: 'Runner',
-    location: 'Bhopal',
-  },
-  {
-    imgUrl: 'account_circle',
-    name: 'Head phone',
-    skill: 'Runner',
-    location: 'Mohali',
-  },
-];
 
 export default VolunteerList;

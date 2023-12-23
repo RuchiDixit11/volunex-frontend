@@ -2,6 +2,9 @@ import { Box, Card, Grid, Icon, IconButton, styled, Tooltip } from '@mui/materia
 import { Small } from 'app/components/Typography';
 import { useNavigate } from 'react-router-dom';
 import bellIcon from '../../../../assets/img/bell-alert.gif';
+import { locale } from 'moment';
+import { useEffect, useState } from 'react';
+import useAuth from 'app/hooks/useAuth';
 
 const StyledCard = styled(Card)(({ theme }) => ({
   display: 'flex',
@@ -34,37 +37,60 @@ const Heading = styled('h6')(({ theme }) => ({
 }));
 
 const StatCards = () => {
-  const cardList = [
-    { name: 'Number of Organization ', amount: 30, icon: 'group' },
-    { name: 'Number of Volunteers', amount: '80,500', icon: 'group' },
-    {
-      name: 'Number of Campaigns',
-      amount: '8.5% ',
-      icon: 'store',
-    },
-    { name: 'Orders', amount: '305', icon: 'group' },
-  ];
+  const { getCountList } = useAuth();
+  const [count, setCount] = useState({});
+
   const navigate = useNavigate();
   const NotificationRoute = () => {
     navigate('/notification');
   };
+
+  const findCount = async () => {
+    try {
+      const res = await getCountList();
+      const { data } = res;
+      setCount(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    findCount();
+  }, []);
+
+  const cardList = [
+    { name: 'All Organization ', amount: count?.org_count, icon: 'group' },
+    { name: 'All Volunteers', amount: count?.vol_count, icon: 'group' },
+    {
+      name: 'All Organization Campaigns',
+      amount: count?.camp_count,
+      icon: 'store',
+    },
+  ];
+  const localData = localStorage.getItem('userdata');
+  const user = JSON.parse(localData);
+
   return (
     <Grid container spacing={3} sx={{ mb: '24px' }}>
-      <Grid item xs={12} md={12}>
-        <StyledCard
-          onClick={NotificationRoute}
-          elevation={6}
-          style={{
-            minHeight: '400px',
-            justifyContent: 'center',
-            backgroundColor: '#5B1F6B',
-          }}
-        >
-          <ContentBox>
-            <img src={bellIcon} />
-          </ContentBox>
-        </StyledCard>
-      </Grid>
+      {user?.user_type == '2' && (
+        <Grid item xs={12} md={12}>
+          <StyledCard
+            onClick={NotificationRoute}
+            elevation={6}
+            style={{
+              minHeight: '400px',
+              justifyContent: 'center',
+              backgroundColor: '#5B1F6B',
+            }}
+          >
+            <ContentBox>
+              <img src={bellIcon} />
+            </ContentBox>
+          </StyledCard>
+        </Grid>
+      )}
+
       {cardList.map((item, index) => (
         <Grid item xs={12} md={6} key={index}>
           <StyledCard elevation={6}>

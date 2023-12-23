@@ -16,6 +16,7 @@ import { Formik } from 'formik';
 import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
+import Mylogo from '../../../assets/img/mylog.png';
 import BannerImage from '../../../assets/img/waldemar.jpg';
 
 const FlexBox = styled(Box)(() => ({ display: 'flex', alignItems: 'center' }));
@@ -92,7 +93,7 @@ const JwtLogin = () => {
         <Grid container>
           <Grid item sm={6} xs={12}>
             <JustifyBox p={4} height="100%" sx={{ minWidth: 320 }}>
-              <img src="/assets/images/illustrations/dreamer.svg" width="100%" alt="" />
+              <img src={Mylogo} width="100%" alt="" />
             </JustifyBox>
           </Grid>
 

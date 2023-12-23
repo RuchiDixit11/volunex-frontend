@@ -93,6 +93,9 @@ const Layout1Topbar = () => {
   };
   const { palette } = useTheme();
   const textColor = palette.primary.contrastText;
+  const localData = localStorage.getItem('userdata');
+  const UserData = JSON.parse(localData);
+
   return (
     <TopbarRoot>
       <TopbarContainer>
@@ -103,10 +106,8 @@ const Layout1Topbar = () => {
         </Box>
 
         <Box display="flex" alignItems="center">
-          <MatxSearchBox />
-          <NotificationProvider>
-            <NotificationBar />
-          </NotificationProvider>
+          {/* <MatxSearchBox /> */}
+          <NotificationProvider>{/* <NotificationBar /> */}</NotificationProvider>
           <ChatHead
             icon={
               <IconButton sx={{ my: '12px', color: textColor }} size="small">
@@ -122,7 +123,12 @@ const Layout1Topbar = () => {
               <UserMenu>
                 <Hidden xsDown>
                   <Span>
-                    Hi <strong>{user?.name || 'akanksha'}</strong>
+                    Hi{' '}
+                    <strong>
+                      {UserData?.user_type === '1'
+                        ? UserData?.organization_name
+                        : UserData?.fullname}
+                    </strong>
                   </Span>
                 </Hidden>
                 <Avatar src={user?.avatar} sx={{ cursor: 'pointer' }} />

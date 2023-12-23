@@ -1,5 +1,5 @@
-import useSettings from "app/hooks/useSettings";
-import Logo from "../../assets/img/volunexlogo.png";
+import useSettings from 'app/hooks/useSettings';
+import Logo from '../../assets/img/mylog.png';
 
 const MyLogo = ({ className }) => {
   const { settings } = useSettings();
@@ -7,7 +7,7 @@ const MyLogo = ({ className }) => {
 
   return (
     <div>
-      <img src={Logo} style={{ width: "100px" }} />
+      <img src={Logo} style={{ width: '100px' }} />
     </div>
   );
 };

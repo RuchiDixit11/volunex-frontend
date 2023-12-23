@@ -1,22 +1,22 @@
-import { CircularProgress } from "@mui/material";
-import { Box, styled } from "@mui/system";
-import BlackLogo from "../../assets/img/volunexlogoblack.png";
+import { CircularProgress } from '@mui/material';
+import { Box, styled } from '@mui/system';
+import BlackLogo from '../../assets/img/mylog.png';
 
-const StyledLoading = styled("div")(() => ({
-  width: "100%",
-  height: "100%",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  "& img": {
-    width: "auto",
-    height: "100px",
+const StyledLoading = styled('div')(() => ({
+  width: '100%',
+  height: '100%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  '& img': {
+    width: 'auto',
+    height: '100px',
   },
-  "& .circleProgress": {
-    position: "absolute",
+  '& .circleProgress': {
+    position: 'absolute',
     left: -7,
     right: 0,
-    top: "calc(50% - 25px)",
+    top: 'calc(50% - 25px)',
   },
 }));
 const Loading = () => {

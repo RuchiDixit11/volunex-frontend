@@ -70,7 +70,6 @@ export const NotificationProvider = ({ settings, children }) => {
       const res = await axios.get(
         `http://103.186.184.179:3010/api/user/get_notification?volunteer_id=${volunteer_id}`
       );
-      console.log('res:::: notification ', res);
       dispatch({
         type: 'LOAD_NOTIFICATIONS',
         payload: res.data,

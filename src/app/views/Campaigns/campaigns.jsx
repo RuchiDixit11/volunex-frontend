@@ -116,20 +116,32 @@ const Campaigns = () => {
     setOpenDeleteCampaign(false);
   };
 
-  React.useEffect(() => {
+  const getCampaignsList = () => {
     (async () => {
-      const response = await fetch(`http://localhost:3300/api/event/event_list?org_id=${orgId}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-          mode: 'no-cors',
-          'x-auth-token': `${token}`,
-        },
-      });
+      const response = await fetch(
+        `http://103.186.184.179:3010/api/event/event_list?org_id=${orgId}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            mode: 'no-cors',
+            'x-auth-token': `${token}`,
+          },
+        }
+      );
       const { data } = await response.json();
       setCampaignList(data);
     })();
+  };
+
+  React.useEffect(() => {
+    getCampaignsList();
   }, []);
+
+  const handleCloseDelete = () => {
+    setOpenDeleteCampaign(false);
+    getCampaignsList();
+  };
 
   return (
     <Container>
@@ -155,14 +167,21 @@ const Campaigns = () => {
           <ProductTable>
             <TableHead>
               <TableRow>
-                <TableCell sx={{ px: 3 }} colSpan={4}>
+                <TableCell sx={{ px: 3 }} colSpan={6}>
                   Campaigns Name
                 </TableCell>
-                <TableCell sx={{ px: 0 }} colSpan={2}>
+                <TableCell sx={{ px: 0 }} colSpan={5}>
                   Date
                 </TableCell>
-                <TableCell sx={{ px: 3 }} colSpan={4}>
+                <TableCell sx={{ px: 3 }} colSpan={3}>
                   Action
+                </TableCell>
+
+                <TableCell sx={{ px: 3 }} colSpan={4}>
+                  Add Volunteer
+                </TableCell>
+                <TableCell sx={{ px: 3 }} colSpan={4}>
+                  Delete
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -171,77 +190,84 @@ const Campaigns = () => {
               {campaignsList &&
                 campaignsList?.map((cam, index) => (
                   <TableRow key={index} hover>
-                    <TableCell colSpan={4} align="left" sx={{ px: 0, textTransform: 'capitalize' }}>
+                    <TableCell colSpan={6} align="left" sx={{ px: 0, textTransform: 'capitalize' }}>
                       <Box display="flex" alignItems="center">
                         <Paragraph sx={{ m: 0, ml: 4 }}>{cam?.event_name}</Paragraph>
                       </Box>
                     </TableCell>
 
-                    <TableCell sx={{ px: 0 }} align="left" colSpan={2}>
+                    <TableCell sx={{ px: 0 }} align="left" colSpan={5}>
                       {cam?.from_date}
                     </TableCell>
 
-                    <TableCell sx={{ px: 3 }} colSpan={4}>
+                    <TableCell sx={{ px: 3 }} colSpan={3}>
                       <IconButton>
                         <Icon color="primary" onClick={() => setOpenEditCampaign(true)}>
                           edit
                         </Icon>
                       </IconButton>
-
-                      {/* open dialog for edit campaigns */}
-
-                      <Dialog
-                        open={openEditCampaign}
-                        TransitionComponent={Transition}
-                        keepMounted
-                        onClose={handleCloseEditCampaign}
-                        aria-describedby="alert-dialog-slide-description"
-                      >
-                        <DialogTitle>{'Edit Campaigns'}</DialogTitle>
-                        <DialogContent>
-                          <DialogContentText id="alert-dialog-slide-description">
-                            <EditCampaign
-                              eventId={cam?._id}
-                              handleClose={handleCloseEditCampaign}
-                            />
-                          </DialogContentText>
-                        </DialogContent>
-                      </Dialog>
-
-                      <IconButton>
-                        <Icon color="primary" onClick={() => setOpenDeleteCampaign(true)}>
-                          remove
-                        </Icon>
-                      </IconButton>
+                    </TableCell>
+                    <TableCell sx={{ px: 3 }} colSpan={4}>
                       <Button variant="outlined">
                         <Link to={'/volunteers'}>Find Volunteers </Link>
                       </Button>
-
-                      {/* open dialog for delete campaigns */}
-
-                      <Dialog
-                        open={openDeleteCampaign}
-                        TransitionComponent={Transition}
-                        keepMounted
-                        onClose={() => setOpenDeleteCampaign(false)}
-                        aria-describedby="alert-dialog-slide-description"
-                      >
-                        <DialogTitle>{'Delete Campaigns'}</DialogTitle>
-                        <DialogContent>
-                          <DialogContentText id="alert-dialog-slide-description">
-                            Do you want to delete the campaign ?
-                          </DialogContentText>
-                        </DialogContent>
-                        <DialogActions>
-                          <Button onClick={() => setOpenDeleteCampaign(false)} color="primary">
-                            Disagree
-                          </Button>
-                          <Button onClick={() => handleDeleteCampaign(cam?._id)} color="primary">
-                            Agree
-                          </Button>
-                        </DialogActions>
-                      </Dialog>
                     </TableCell>
+                    {/* open dialog for edit campaigns */}
+
+                    <Dialog
+                      open={openEditCampaign}
+                      TransitionComponent={Transition}
+                      keepMounted
+                      onClose={handleCloseEditCampaign}
+                      aria-describedby="alert-dialog-slide-description"
+                    >
+                      <DialogTitle>{'Edit Campaigns'}</DialogTitle>
+                      <DialogContent>
+                        <DialogContentText id="alert-dialog-slide-description">
+                          <EditCampaign eventId={cam?._id} handleClose={handleCloseEditCampaign} />
+                        </DialogContentText>
+                      </DialogContent>
+                    </Dialog>
+                    <TableCell sx={{ px: 3 }} colSpan={4}>
+                      <IconButton>
+                        <span
+                          class="material-icons notranslate MuiIcon-root MuiIcon-fontSizeLarge css-1t3czx9"
+                          aria-hidden="true"
+                          aria-label="delete"
+                          onClick={() => {
+                            setOpenDeleteCampaign(true);
+                          }}
+                        >
+                          delete
+                        </span>
+                      </IconButton>
+                    </TableCell>
+
+                    {/* open dialog for delete campaigns */}
+
+                    <Dialog
+                      open={openDeleteCampaign}
+                      TransitionComponent={Transition}
+                      keepMounted
+                      onClose={() => setOpenDeleteCampaign(false)}
+                      aria-describedby="alert-dialog-slide-description"
+                    >
+                      <DialogTitle>{'Delete Campaigns'}</DialogTitle>
+                      <DialogContent>
+                        <DialogContentText id="alert-dialog-slide-description">
+                          Do you want to delete the campaign ?
+                        </DialogContentText>
+                      </DialogContent>
+                      <DialogActions>
+                        <Button onClick={() => handleCloseDelete()} color="primary">
+                          Disagree
+                        </Button>
+                        <Button onClick={() => handleDeleteCampaign(cam?._id)} color="primary">
+                          Agree
+                        </Button>
+                      </DialogActions>
+                    </Dialog>
+                    {/* </TableCell> */}
                   </TableRow>
                 ))}
             </TableBody>
@@ -266,38 +292,5 @@ const Campaigns = () => {
     </Container>
   );
 };
-
-const productList = [
-  {
-    imgUrl: '/assets/images/products/headphone-2.jpg',
-    name: 'earphone',
-    skill: 100,
-    location: 15,
-  },
-  {
-    imgUrl: '/assets/images/products/headphone-3.jpg',
-    name: 'earphone',
-    skill: 1500,
-    location: 30,
-  },
-  {
-    imgUrl: '/assets/images/products/iphone-2.jpg',
-    name: 'iPhone x',
-    skill: 1900,
-    location: 35,
-  },
-  {
-    imgUrl: '/assets/images/products/iphone-1.jpg',
-    name: 'iPhone x',
-    skill: 100,
-    location: 0,
-  },
-  {
-    imgUrl: '/assets/images/products/headphone-3.jpg',
-    name: 'Head phone',
-    skill: 1190,
-    location: 5,
-  },
-];
 
 export default Campaigns;

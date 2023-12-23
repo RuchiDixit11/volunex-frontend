@@ -25,7 +25,7 @@ const setSession = (accessToken, data) => {
     localStorage.setItem('disasterToken', accessToken);
     localStorage.setItem('user_id', data?._id);
     localStorage.setItem('user_type', data?.user_type);
-    localStorage.setItem('userdata', data);
+    localStorage.setItem('userdata', JSON.stringify(data));
     axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
   } else {
     localStorage.removeItem('disasterToken');
@@ -91,11 +91,15 @@ const AuthContext = createContext({
   editEvent: () => Promise.resolve(),
   sendRequest: () => Promise.resolve(),
   getCampaigns: () => Promise.resolve(),
+  getCountList: () => Promise.resolve(),
+  allOrgList: () => Promise.resolve(),
+  searchVolunteer: () => Promise.resolve(),
 });
 
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-
+  const token = localStorage.getItem('disasterToken');
+  const orgId = localStorage.getItem('user_id');
   const login = async (email, password, user_type) => {
     const response = await axios.post('http://103.186.184.179:3010/api/auth/login', {
       email,
@@ -118,7 +122,7 @@ export const AuthProvider = ({ children }) => {
   const getRequest = async () => {
     const token = localStorage.getItem('disasterToken');
 
-    const response = await axios.get('http://localhost:3300/api/user/filters', {
+    const response = await axios.get('http://103.186.184.179:3010/api/user/filters', {
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
@@ -126,7 +130,7 @@ export const AuthProvider = ({ children }) => {
       },
     });
     const { data, msg } = response;
-    console.log(data, '-----data----', msg);
+    console.log(data, '<-----data', msg);
 
     dispatch({
       type: 'GET_REQUEST',
@@ -136,10 +140,38 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
-  const getCampaigns = async () => {
+  const getCountList = async () => {
     const token = localStorage.getItem('disasterToken');
     const orgId = localStorage.getItem('user_id');
-    const response = await axios.get(`http://localhost:3300/api/event/event_list?org_id=${orgId}`, {
+    const response = await axios.get(`http://103.186.184.179:3010/api/user/count_list`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        'x-auth-token': `${token}`,
+      },
+    });
+    const { data } = await response;
+    console.log(data, '<-----data COUNT');
+    return data;
+  };
+
+  const getVolunteerList = async () => {
+    const token = localStorage.getItem('disasterToken');
+    const orgId = localStorage.getItem('user_id');
+    const response = await axios.get(`http://103.186.184.179:3010/api/user/volunteer_list`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        'x-auth-token': `${token}`,
+      },
+    });
+    const { data } = await response;
+    console.log(data, '<----volunteeer');
+    return data;
+  };
+
+  const allEventList = async () => {
+    const response = axios.get('http://103.186.184.179:3010/api/event/all_event_list', {
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
@@ -147,14 +179,38 @@ export const AuthProvider = ({ children }) => {
       },
     });
     const { data } = await response.json();
-    console.log(data, '-----data----');
+    console.log(data, '<-----data EVENT LIST');
+    return data;
+  };
 
-    dispatch({
-      type: 'GET_CAMPAIGNS',
-      // payload: {
-      //   user,
-      // },
+  const allOrgList = async () => {
+    const response = axios.get('http://103.186.184.179:3010/api/user/org_list', {
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        'x-auth-token': `${token}`,
+      },
     });
+    const { data } = await response;
+    console.log(data, '<-----data ORG LIST');
+    return data;
+  };
+
+  const getCampaigns = async () => {
+    const orgId = localStorage.getItem('user_id');
+    const response = await axios.get(
+      `http://103.186.184.179:3010/api/event/event_list?org_id=${orgId}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          'x-auth-token': `${token}`,
+        },
+      }
+    );
+    const { data } = await response.json();
+    console.log(data, '<-----data campaign');
+    return data;
   };
 
   const register = async (payload) => {
@@ -169,7 +225,7 @@ export const AuthProvider = ({ children }) => {
 
   const addEvent = async (payload) => {
     const token = localStorage.getItem('disasterToken');
-    const response = await axios.post('http://localhost:3300/api/event/add_event', payload, {
+    const response = await axios.post('http://103.186.184.179:3010/api/event/add_event', payload, {
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
@@ -198,13 +254,17 @@ export const AuthProvider = ({ children }) => {
 
   const editEvent = async (payload) => {
     const token = localStorage.getItem('disasterToken');
-    const response = await axios.patch(`http://localhost:3300/api/event/event_update`, payload, {
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        'x-auth-token': `${token}`,
-      },
-    });
+    const response = await axios.patch(
+      `http://103.186.184.179:3010/api/event/event_update`,
+      payload,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          'x-auth-token': `${token}`,
+        },
+      }
+    );
     console.log(response, 'response');
     return response;
   };
@@ -212,7 +272,23 @@ export const AuthProvider = ({ children }) => {
   const deleteEvent = async (event_id) => {
     const token = localStorage.getItem('disasterToken');
     const response = await axios.delete(
-      `http://localhost:3300/api/event/delete_event/${event_id}`,
+      `http://103.186.184.179:3010/api/event/delete_event/${event_id}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          'x-auth-token': `${token}`,
+        },
+      }
+    );
+    console.log(response, 'response');
+    return response;
+  };
+
+  const searchVolunteer = async (id) => {
+    const token = localStorage.getItem('disasterToken');
+    const response = await axios.get(
+      `http://103.186.184.179:3010/api/user/filters?skill_id=${id}`,
       {
         headers: {
           'Content-Type': 'application/json',
@@ -282,6 +358,11 @@ export const AuthProvider = ({ children }) => {
         deleteEvent,
         sendRequest,
         getCampaigns,
+        getCountList,
+        allEventList,
+        allOrgList,
+        getVolunteerList,
+        searchVolunteer,
       }}
     >
       {children}

@@ -97,12 +97,6 @@ const headCells = [
     disablePadding: false,
     label: 'volunteer Location',
   },
-  {
-    id: 'action',
-    numeric: true,
-    disablePadding: false,
-    label: 'Action',
-  },
 ];
 
 function EnhancedTableHead(props) {
@@ -128,7 +122,7 @@ function EnhancedTableHead(props) {
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
-            align={headCell.numeric ? 'right' : 'left'}
+            align={headCell.numeric ? 'left' : 'left'}
             padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
           >
@@ -166,8 +160,8 @@ function EnhancedTableToolbar(props) {
   return (
     <Toolbar
       sx={{
-        pl: { sm: 2 },
-        pr: { xs: 1, sm: 1 },
+        // pl: { sm: 2 },
+        // pr: { xs: 1, sm: 1 },
         ...(numSelected > 0 && {
           bgcolor: (theme) =>
             alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
@@ -179,12 +173,13 @@ function EnhancedTableToolbar(props) {
           {numSelected} selected
         </Typography>
       ) : (
-        <Typography sx={{ flex: '1 1 100%' }} variant="h6" id="tableTitle" component="div">
-          Nutrition
-        </Typography>
+        <></>
+        // <Typography sx={{ flex: '1 1 100%' }} variant="h6" id="tableTitle" component="div">
+        //   Volunteer
+        // </Typography>
       )}
 
-      {numSelected > 0 ? (
+      {/* {numSelected > 0 ? (
         <Tooltip title="Delete">
           <IconButton>
             <DeleteIcon />
@@ -196,7 +191,7 @@ function EnhancedTableToolbar(props) {
             <FilterListIcon />
           </IconButton>
         </Tooltip>
-      )}
+      )} */}
     </Toolbar>
   );
 }
@@ -205,7 +200,7 @@ EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
 
-export default function EnhancedTable({ data, handleSendRequest }) {
+function EnhancedTable({ data, handleSendRequest }) {
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
   const [selected, setSelected] = React.useState([]);
@@ -318,17 +313,17 @@ export default function EnhancedTable({ data, handleSendRequest }) {
               {rows?.length > 0 &&
                 rows?.map((row, index) => {
                   console.log('row ::: in table', row);
-                  const isItemSelected = isSelected(row.id);
+                  const isItemSelected = isSelected(row?.id);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.id)}
+                      onClick={(event) => handleClick(event, row?.id)}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.id}
+                      key={row?.id}
                       selected={isItemSelected}
                       sx={{ cursor: 'pointer' }}
                     >
@@ -342,12 +337,10 @@ export default function EnhancedTable({ data, handleSendRequest }) {
                         />
                       </TableCell>
                       <TableCell component="th" id={labelId} scope="row" padding="none">
-                        {row.volunteer_name}
+                        {row?.volunteer_name}
                       </TableCell>
-                      <TableCell align="right">{row.volunteer_experience}</TableCell>
-                      <TableCell align="right">{row.volunteer_location}</TableCell>
-                      {/* <TableCell align="right">{row.carbs}</TableCell>
-                    <TableCell align="right">{row.protein}</TableCell> */}
+                      <TableCell align="left">{row?.volunteer_experience}</TableCell>
+                      <TableCell align="left">{row?.volunteer_location}</TableCell>
                     </TableRow>
                   );
                 })}
@@ -373,16 +366,21 @@ export default function EnhancedTable({ data, handleSendRequest }) {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
-      <FormControlLabel
+
+      {/* <FormControlLabel
         control={<Switch checked={dense} onChange={handleChangeDense} />}
         label="Dense padding"
-      />
-      <Button onClick={() => setOpenCampaignMessage(true)} align="right" variant="outlined">
+      /> */}
+      <Button
+        onClick={() => setOpenCampaignMessage(true)}
+        disabled={!selected.length}
+        align="right"
+        variant="outlined"
+      >
         Send Request
       </Button>
       <Dialog
         open={openCampaignMessage}
-        // TransitionComponent={Transition}
         keepMounted
         onClose={() => setOpenCampaignMessage(false)}
         aria-describedby="alert-dialog-slide-description"
@@ -401,7 +399,6 @@ export default function EnhancedTable({ data, handleSendRequest }) {
                 }}
                 label="Notification message"
                 variant="outlined"
-                //   onBlur={handleBlur}
                 sx={{ mb: 3 }}
               />
             </div>
@@ -422,3 +419,5 @@ export default function EnhancedTable({ data, handleSendRequest }) {
     </Box>
   );
 }
+
+export default EnhancedTable;

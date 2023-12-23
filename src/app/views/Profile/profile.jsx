@@ -1,5 +1,6 @@
 import { Box, Card, styled, useTheme } from '@mui/material';
 import { Breadcrumb, SimpleCard } from 'app/components';
+import Logo from '../../../assets/img/mylog.png';
 const Container = styled('div')(({ theme }) => ({
   margin: '30px',
   [theme.breakpoints.down('sm')]: { margin: '16px' },
@@ -10,6 +11,9 @@ const Container = styled('div')(({ theme }) => ({
 }));
 const Profile = () => {
   const { palette } = useTheme();
+  const localData = localStorage.getItem('userdata');
+  const user = JSON.parse(localData);
+  console.log(user, 'userdata');
   return (
     <Container>
       <Box className="breadcrumb">
@@ -19,11 +23,18 @@ const Profile = () => {
         <div className="my-profile">
           <div class="box">
             <div id="overlay">
+              {/* <div>
+                <img className="img-fluid"  style={{maxS}}src={Logo} alt="org name" />
+              </div> */}
               <div class="image">
                 <div class="trick"></div>
               </div>
-              <ul class="text">Walter Wright</ul>
-              <div class="text1">HTML + CSS</div>
+              <ul class="text">
+                {user?.user_type === '1' ? user?.organization_name : user?.fullname}
+              </ul>
+              <div style={{ marginBottom: '20px ' }} class="text1">
+                {user?.email}
+              </div>
               <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                 <div class="panel panel-default">
                   <div class="panel-heading " role="tab" id="headingOne">
@@ -36,7 +47,7 @@ const Profile = () => {
                         aria-expanded=""
                         aria-controls="collapseOne"
                       >
-                        <div class="title  btn btn-danger btn-outline btn-lg">ABOUT WALTER</div>
+                        <div class="title  btn btn-danger btn-outline btn-lg">ABOUT </div>
                       </a>
                     </h4>
                   </div>
@@ -48,9 +59,16 @@ const Profile = () => {
                   >
                     <div class="panel-body">
                       {' '}
-                      Walter has been building websites for years. He enjoys making unique websites
-                      and web projects. His hobbies include photography, woodworking,
-                      leatherworking, fishing, and mid century modern furniture.{' '}
+                      <div style={{ marginBottom: '20px' }}>
+                        <div>About:-</div>
+                        {user?.user_type === '1'
+                          ? user?.organization_mission
+                          : user?.short_bio}{' '}
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span>No of employees </span>{' '}
+                        <b> {user?.user_type === '1' ? user?.organization_employees : ''} </b>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -66,7 +84,7 @@ const Profile = () => {
                         aria-expanded="false"
                         aria-controls="collapseTwo"
                       >
-                        <div class="title btn btn-danger btn-outline btn-lg">SOCIAL</div>
+                        <div class="title btn btn-danger btn-outline btn-lg">Location</div>
                       </a>
                     </h4>
                   </div>
@@ -78,10 +96,26 @@ const Profile = () => {
                   >
                     <div class="panel-body">
                       {' '}
-                      Walter has been building websites for years. He enjoys making unique websites
-                      and web projects. His hobbies include photography, woodworking,
-                      leatherworking, fishing, and mid century modern furniture.{' '}
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span>Address </span>{' '}
+                        <b>
+                          {' '}
+                          {user?.user_type === '1'
+                            ? user?.organization_address
+                            : user?.address}{' '}
+                        </b>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span>State </span>{' '}
+                        <b> {user?.user_type === '1' ? user?.organization_state : user?.state} </b>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span>Zip Code </span>{' '}
+                        <b> {user?.user_type === '1' ? user?.organization_zip : user?.zip} </b>
+                      </div>
                     </div>
+                    <div></div>
+                    <div></div>
                   </div>
                 </div>
                 <div class="panel panel-default">
@@ -107,12 +141,16 @@ const Profile = () => {
                     aria-labelledby="headingThree"
                   >
                     <div class="panel-body">
-                      <form id="form" class="topBefore">
-                        <input id="name" type="text" placeholder="NAME" />
-                        <input id="email" type="text" placeholder="E-MAIL" />
-                        <textarea id="message" type="text" placeholder="MESSAGE"></textarea>
-                        <input id="submit" type="submit" value="Submit Now!" />
-                      </form>
+                      <div class="">
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <span>Phone Number </span>{' '}
+                          <b>
+                            {' '}
+                            {user?.user_type === '1' ? user?.organization_phone : user?.phone}
+                            {user?.user_type === '1' ? '' : user?.emergency_contact}{' '}
+                          </b>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

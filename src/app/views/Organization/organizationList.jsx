@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import { Paragraph } from 'app/components/Typography';
 import { Breadcrumb, SimpleCard } from 'app/components';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import useAuth from 'app/hooks/useAuth';
 import fetch from 'cross-fetch';
 
@@ -68,34 +68,25 @@ const Small = styled('small')(({ bgcolor }) => ({
 }));
 
 const OrganizationList = () => {
-  const { palette } = useTheme();
-  const { getRequest } = useAuth();
-
-  const bgError = palette.error.main;
-  const bgPrimary = palette.primary.main;
-  const bgSecondary = palette.secondary.main;
+  const { allOrgList } = useAuth();
+  const [orgData, setOrgData] = useState([]);
 
   const getOrganizationsList = async () => {
     try {
-      const res = await getRequest();
-      console.log(' getRequest()::::', res);
-      // navigate('/');
-    } catch (e) {
-      // setLoading(false);
-      console.log(e, 'getRequest error');
+      const res = await allOrgList();
+      console.log(' allOrgList :::::::', res);
+      const orgs = res.data;
+      setOrgData(orgs);
+    } catch (error) {
+      return error;
     }
   };
 
   useEffect(() => {
     getOrganizationsList();
   }, []);
-  // -----------
-  function sleep(delay = 0) {
-    return new Promise((resolve) => setTimeout(resolve, delay));
-  }
-  const token = localStorage.getItem('disasterToken');
+  console.log('data orgData', orgData);
 
-  // -----------
   return (
     <Container>
       <Box className="breadcrumb">
@@ -103,7 +94,7 @@ const OrganizationList = () => {
       </Box>
       <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
         <CardHeader>
-          <Title>Register Organization List</Title>
+          <Title>Register Organization </Title>
           <Select size="small" defaultValue="this_month">
             <MenuItem value="this_month">This Month</MenuItem>
             <MenuItem value="last_month">Last Month</MenuItem>
@@ -115,55 +106,54 @@ const OrganizationList = () => {
             <TableHead>
               <TableRow>
                 <TableCell sx={{ px: 3 }} colSpan={4}>
-                  Organization Name
+                  #
+                </TableCell>
+                <TableCell sx={{ px: 3 }} colSpan={4}>
+                  Name
                 </TableCell>
                 <TableCell sx={{ px: 0 }} colSpan={2}>
-                  no of volunteers
+                  No of volunteers
                 </TableCell>
                 <TableCell sx={{ px: 0 }} colSpan={2}>
-                  Organization Location
+                  Location
                 </TableCell>
-                <TableCell sx={{ px: 0 }} colSpan={1}>
+                {/* <TableCell sx={{ px: 0 }} colSpan={1}>
                   Action
-                </TableCell>
+                </TableCell> */}
               </TableRow>
             </TableHead>
 
             <TableBody>
-              {productList.map((product, index) => (
-                <TableRow key={index} hover>
-                  <TableCell colSpan={4} align="left" sx={{ px: 0, textTransform: 'capitalize' }}>
-                    <Box display="flex" alignItems="center">
-                      <Avatar src={product.imgUrl} />
-                      <Paragraph sx={{ m: 0, ml: 4 }}>{product.name}</Paragraph>
-                    </Box>
-                  </TableCell>
+              {orgData?.length &&
+                orgData?.map((org, index) => (
+                  <TableRow key={index} hover>
+                    <TableCell align="left" colSpan={4}>
+                      {index + 1}
+                    </TableCell>
+                    <TableCell colSpan={4} align="left" sx={{ px: 0, textTransform: 'capitalize' }}>
+                      <Box display="flex" alignItems="center">
+                        {/* <Avatar src={org.imgUrl} /> */}
+                        <Paragraph sx={{ m: 0, ml: 4 }}>{org?.organization_name}</Paragraph>
+                      </Box>
+                    </TableCell>
 
-                  <TableCell align="left" colSpan={2} sx={{ px: 0, textTransform: 'capitalize' }}>
-                    {product.volunteers > 999
-                      ? (product.volunteers / 1000).toFixed(1) + ''
-                      : product.volunteers}
-                  </TableCell>
+                    <TableCell align="left" colSpan={2} sx={{ px: 0, textTransform: 'capitalize' }}>
+                      {org?.organization_employees > 999
+                        ? (org?.organization_employees / 1000).toFixed(1) + ''
+                        : org?.organization_employees}
+                    </TableCell>
 
-                  <TableCell sx={{ px: 0 }} align="left" colSpan={2}>
-                    {product.location ? (
-                      product.location < 20 ? (
-                        <Small bgcolor={bgSecondary}>{product.location} location</Small>
-                      ) : (
-                        <Small bgcolor={bgPrimary}>in stock</Small>
-                      )
-                    ) : (
-                      <Small bgcolor={bgError}>out of stock</Small>
-                    )}
-                  </TableCell>
+                    <TableCell sx={{ px: 0 }} align="left" colSpan={2}>
+                      {org?.organization_address}
+                    </TableCell>
 
-                  <TableCell sx={{ px: 0 }} colSpan={1}>
-                    <IconButton>
-                      <Icon color="primary">edit</Icon>
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
+                    {/* <TableCell sx={{ px: 0 }} colSpan={1}>
+                      <IconButton>
+                        <Icon color="primary">edit</Icon>
+                      </IconButton>
+                    </TableCell> */}
+                  </TableRow>
+                ))}
             </TableBody>
           </ProductTable>
         </Box>

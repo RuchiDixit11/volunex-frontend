@@ -119,6 +119,7 @@ export default function StepperFormRegistration({ handleFormSubmit }) {
     organization_supports: Yup.string().required('Supports is required!'),
   });
 
+  const initialValues = {};
   const handleFinish = (values) => {
     // e.preventDefault();
     console.log('Form Data:', values);
