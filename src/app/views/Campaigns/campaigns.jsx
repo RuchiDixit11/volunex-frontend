@@ -117,18 +117,16 @@ const Campaigns = () => {
   };
 
   const getCampaignsList = () => {
+    const base_url = process.env.REACT_APP_API_URL;
     (async () => {
-      const response = await fetch(
-        `http://103.186.184.179:3010/api/event/event_list?org_id=${orgId}`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            mode: 'no-cors',
-            'x-auth-token': `${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${base_url}/api/event/event_list?org_id=${orgId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          mode: 'no-cors',
+          'x-auth-token': `${token}`,
+        },
+      });
       const { data } = await response.json();
       setCampaignList(data);
     })();

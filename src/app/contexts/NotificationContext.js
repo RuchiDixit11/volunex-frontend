@@ -66,9 +66,10 @@ export const NotificationProvider = ({ settings, children }) => {
 
   const getNotifications = async () => {
     const volunteer_id = localStorage.getItem('user_id');
+    const base_url = process.env.REACT_APP_API_URL;
     try {
       const res = await axios.get(
-        `http://103.186.184.179:3010/api/user/get_notification?volunteer_id=${volunteer_id}`
+        `${base_url}/api/user/get_notification?volunteer_id=${volunteer_id}`
       );
       dispatch({
         type: 'LOAD_NOTIFICATIONS',

@@ -92,17 +92,6 @@ const VolunteerList = () => {
 
     try {
       const response = searchVolunteer(event.target.value);
-      // await fetch(
-      //   `http://103.186.184.179:3010/api/user/filters?skill_id=${event.target.value}`,
-      //   {
-      //     headers: {
-      //       'Content-Type': 'application/json',
-      //       Accept: 'application/json',
-      //       mode: 'no-cors',
-      //       'x-auth-token': `${token}`,
-      //     },
-      //   }
-      // );
       const { data, msg } = await response.json();
       console.log('response :::::', response.json(), 'data ::', data);
       setFilteredData(data?.data);
