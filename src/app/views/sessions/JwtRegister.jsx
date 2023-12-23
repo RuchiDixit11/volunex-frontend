@@ -1,6 +1,17 @@
-import { useTheme } from '@emotion/react';
+// import { useTheme } from '@emotion/react';
 import { LoadingButton } from '@mui/lab';
-import { Card, Checkbox, Grid, TextField } from '@mui/material';
+import {
+  Card,
+  Checkbox,
+  FormControlLabel,
+  FormLabel,
+  Grid,
+  Radio,
+  RadioGroup,
+  TextField,
+  Menu,
+  MenuItem,
+} from '@mui/material';
 import { Box, styled } from '@mui/system';
 import { Paragraph } from 'app/components/Typography';
 import useAuth from 'app/hooks/useAuth';
@@ -8,19 +19,52 @@ import { Formik } from 'formik';
 import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import { DatePicker } from '@mui/lab';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+
+import { useTheme } from '@mui/material/styles';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import BannerImage from '../../../assets/img/waldemar.jpg';
+import StepperFormRegistration from './stepperFormregistration';
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
+const UserType = ['Orgnaization', 'Volunteer'];
+const names = ['Marketing', 'Web Development', 'Event Planning', 'Ralph Hubbard', 'Omar Alexander'];
+
+function getStyles(name, personName, theme) {
+  return {
+    fontWeight:
+      personName.indexOf(name) === -1
+        ? theme.typography.fontWeightRegular
+        : theme.typography.fontWeightMedium,
+  };
+}
 
 const FlexBox = styled(Box)(() => ({ display: 'flex', alignItems: 'center' }));
 
 const JustifyBox = styled(FlexBox)(() => ({ justifyContent: 'center' }));
 
-const ContentBox = styled(JustifyBox)(() => ({
-  height: '100%',
-  padding: '32px',
-  background: 'rgba(0, 0, 0, 0.01)',
-}));
-
 const JWTRegister = styled(JustifyBox)(() => ({
-  background: '#1A2038',
+  backgroundImage: `url(${BannerImage})`,
+  backgroundAttachment: 'fixed',
+  backgroundPosition: 'center',
+  backgroundRepeat: ' no-repeat',
+  backgroundSize: 'cover',
+  display: 'grid',
   minHeight: '100vh !important',
   '& .card': {
     maxWidth: 800,
@@ -34,10 +78,22 @@ const JWTRegister = styled(JustifyBox)(() => ({
 
 // inital login credentials
 const initialValues = {
+  user_type: null,
   email: '',
   password: '',
-  username: '',
-  remember: true,
+  fullname: '',
+  gender: null,
+  dob: '',
+  phone: null,
+  address: '',
+  city: '',
+  state: '',
+  zip: '',
+  skills: '',
+  volunteer_experience: '',
+  languages_spoken: '',
+  emergency_contact: '',
+  short_bio: '',
 };
 
 // form field validation schema
@@ -48,130 +104,62 @@ const validationSchema = Yup.object().shape({
   email: Yup.string().email('Invalid Email address').required('Email is required!'),
 });
 
+const options = [
+  'None',
+  'Atria',
+  'Callisto',
+  'Dione',
+  'Ganymede',
+  'Hangouts Call',
+  'Luna',
+  'Oberon',
+  'Phobos',
+  'Pyxis',
+  'Sedna',
+  'Titania',
+  'Triton',
+  'Umbriel',
+];
+const ContentBox = styled(JustifyBox)(() => ({
+  height: '100%',
+  padding: '32px',
+  background: 'rgba(0, 0, 0, 0.01)',
+}));
 const JwtRegister = () => {
   const theme = useTheme();
-  const { register } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [state, setState] = useState({ date: new Date() });
 
-  const handleFormSubmit = (values) => {
-    setLoading(true);
-
-    try {
-      register(values.email, values.username, values.password);
-      navigate('/');
-      setLoading(false);
-    } catch (e) {
-      console.log(e);
-      setLoading(false);
-    }
-  };
+  const [personName, setPersonName] = useState([]);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
 
   return (
     <JWTRegister>
       <Card className="card">
         <Grid container>
-          <Grid item sm={6} xs={12}>
-            <ContentBox>
-              <img
-                width="100%"
-                alt="Register"
-                src="/assets/images/illustrations/posting_photo.svg"
-              />
-            </ContentBox>
-          </Grid>
+          <Box p={4} height="100%">
+            <Grid container spacing={2}>
+              <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
+                <h2 style={{ textAlign: 'center' }}>Sign Up </h2>
+                <StepperFormRegistration />
+              </Grid>
+            </Grid>
 
-          <Grid item sm={6} xs={12}>
-            <Box p={4} height="100%">
-              <Formik
-                onSubmit={handleFormSubmit}
-                initialValues={initialValues}
-                validationSchema={validationSchema}
+            <Paragraph>
+              Already have an account?
+              <NavLink
+                to="/session/signin"
+                style={{
+                  color: theme.palette.primary.main,
+                  marginLeft: 5,
+                }}
               >
-                {({ values, errors, touched, handleChange, handleBlur, handleSubmit }) => (
-                  <form onSubmit={handleSubmit}>
-                    <TextField
-                      fullWidth
-                      size="small"
-                      type="text"
-                      name="username"
-                      label="Username"
-                      variant="outlined"
-                      onBlur={handleBlur}
-                      value={values.username}
-                      onChange={handleChange}
-                      helperText={touched.username && errors.username}
-                      error={Boolean(errors.username && touched.username)}
-                      sx={{ mb: 3 }}
-                    />
-
-                    <TextField
-                      fullWidth
-                      size="small"
-                      type="email"
-                      name="email"
-                      label="Email"
-                      variant="outlined"
-                      onBlur={handleBlur}
-                      value={values.email}
-                      onChange={handleChange}
-                      helperText={touched.email && errors.email}
-                      error={Boolean(errors.email && touched.email)}
-                      sx={{ mb: 3 }}
-                    />
-                    <TextField
-                      fullWidth
-                      size="small"
-                      name="password"
-                      type="password"
-                      label="Password"
-                      variant="outlined"
-                      onBlur={handleBlur}
-                      value={values.password}
-                      onChange={handleChange}
-                      helperText={touched.password && errors.password}
-                      error={Boolean(errors.password && touched.password)}
-                      sx={{ mb: 2 }}
-                    />
-
-                    <FlexBox gap={1} alignItems="center">
-                      <Checkbox
-                        size="small"
-                        name="remember"
-                        onChange={handleChange}
-                        checked={values.remember}
-                        sx={{ padding: 0 }}
-                      />
-
-                      <Paragraph fontSize={13}>
-                        I have read and agree to the terms of service.
-                      </Paragraph>
-                    </FlexBox>
-
-                    <LoadingButton
-                      type="submit"
-                      color="primary"
-                      loading={loading}
-                      variant="contained"
-                      sx={{ mb: 2, mt: 3 }}
-                    >
-                      Regiser
-                    </LoadingButton>
-
-                    <Paragraph>
-                      Already have an account?
-                      <NavLink
-                        to="/session/signin"
-                        style={{ color: theme.palette.primary.main, marginLeft: 5 }}
-                      >
-                        Login
-                      </NavLink>
-                    </Paragraph>
-                  </form>
-                )}
-              </Formik>
-            </Box>
-          </Grid>
+                Login
+              </NavLink>
+            </Paragraph>
+          </Box>
         </Grid>
       </Card>
     </JWTRegister>

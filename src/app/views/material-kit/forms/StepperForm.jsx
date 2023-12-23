@@ -7,14 +7,13 @@ import Typography from "@mui/material/Typography";
 import React from "react";
 
 function getSteps() {
-  return ["Select master blaster campaign settings", "Create an ad group", "Create an ad"];
+  return ["1", "2", "3"];
 }
 
 function getStepContent(stepIndex) {
   switch (stepIndex) {
     case 0:
-      return `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus non tincidunt velit. Quisque laoreet, lectus id tincidunt fringilla, eros est bibendum felis, sit amet lobortis ante sem non diam. Donec viverra a nisi eu eleifend. Mauris vel leo tempor, commodo felis in, sollicitudin velit. Nullam eu sem id lacus venenatis commodo nec a lacus. Donec in egestas justo. Quisque elementum diam felis. In a ullamcorper leo. In lorem urna, mollis in feugiat sed, aliquet nec diam. Mauris tempus dui at gravida pharetra. Etiam nec lectus metus. In dapibus placerat consequat. Quisque ornare ut lacus ac tempus. Pellentesque sed ornare tellus. Curabitur dictum turpis quam, at feugiat mi elementum a.`;
-
+      return <div>dsfsodif</div>;
     case 1:
       return `Integer euismod dapibus sapien, a interdum augue blandit eget. Donec pellentesque, sapien iaculis dignissim sagittis, risus nulla auctor eros, sed suscipit eros mauris id lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer porttitor mauris egestas consequat molestie. Nam egestas iaculis malesuada. Praesent sagittis venenatis finibus. Praesent porttitor ipsum et sapien cursus, eu mattis augue ornare.`;
 
@@ -30,9 +29,11 @@ export default function StepperForm() {
   const [activeStep, setActiveStep] = React.useState(0);
   const steps = getSteps();
 
-  const handleNext = () => setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  const handleNext = () =>
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
 
-  const handleBack = () => setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  const handleBack = () =>
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
 
   const handleReset = () => setActiveStep(0);
 
@@ -51,7 +52,12 @@ export default function StepperForm() {
           <Box>
             <Typography>All steps completed</Typography>
 
-            <Button sx={{ mt: 2 }} variant="contained" color="secondary" onClick={handleReset}>
+            <Button
+              sx={{ mt: 2 }}
+              variant="contained"
+              color="secondary"
+              onClick={handleReset}
+            >
               Reset
             </Button>
           </Box>
@@ -69,7 +75,12 @@ export default function StepperForm() {
                 Back
               </Button>
 
-              <Button sx={{ ml: 2 }} variant="contained" color="primary" onClick={handleNext}>
+              <Button
+                sx={{ ml: 2 }}
+                variant="contained"
+                color="primary"
+                onClick={handleNext}
+              >
                 {activeStep === steps.length - 1 ? "Finish" : "Next"}
               </Button>
             </Box>

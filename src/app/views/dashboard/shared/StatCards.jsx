@@ -1,5 +1,10 @@
 import { Box, Card, Grid, Icon, IconButton, styled, Tooltip } from '@mui/material';
 import { Small } from 'app/components/Typography';
+import { useNavigate } from 'react-router-dom';
+import bellIcon from '../../../../assets/img/bell-alert.gif';
+import { locale } from 'moment';
+import { useEffect, useState } from 'react';
+import useAuth from 'app/hooks/useAuth';
 
 const StyledCard = styled(Card)(({ theme }) => ({
   display: 'flex',
@@ -16,7 +21,11 @@ const ContentBox = styled(Box)(({ theme }) => ({
   flexWrap: 'wrap',
   alignItems: 'center',
   '& small': { color: theme.palette.text.secondary },
-  '& .icon': { opacity: 0.6, fontSize: '44px', color: theme.palette.primary.main },
+  '& .icon': {
+    opacity: 0.6,
+    fontSize: '44px',
+    color: theme.palette.primary.main,
+  },
 }));
 
 const Heading = styled('h6')(({ theme }) => ({
@@ -28,15 +37,60 @@ const Heading = styled('h6')(({ theme }) => ({
 }));
 
 const StatCards = () => {
+  const { getCountList } = useAuth();
+  const [count, setCount] = useState({});
+
+  const navigate = useNavigate();
+  const NotificationRoute = () => {
+    navigate('/notification');
+  };
+
+  const findCount = async () => {
+    try {
+      const res = await getCountList();
+      const { data } = res;
+      setCount(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    findCount();
+  }, []);
+
   const cardList = [
-    { name: 'New Leads', amount: 3050, icon: 'group' },
-    { name: 'This week Sales', amount: '$80,500', icon: 'attach_money' },
-    { name: 'Inventory Status', amount: '8.5% Stock Surplus', icon: 'store' },
-    { name: 'Orders to deliver', amount: '305 Orders', icon: 'shopping_cart' },
+    { name: 'All Organization ', amount: count?.org_count, icon: 'group' },
+    { name: 'All Volunteers', amount: count?.vol_count, icon: 'group' },
+    {
+      name: 'All Organization Campaigns',
+      amount: count?.camp_count,
+      icon: 'store',
+    },
   ];
+  const localData = localStorage.getItem('userdata');
+  const user = JSON.parse(localData);
 
   return (
     <Grid container spacing={3} sx={{ mb: '24px' }}>
+      {user?.user_type == '2' && (
+        <Grid item xs={12} md={12}>
+          <StyledCard
+            onClick={NotificationRoute}
+            elevation={6}
+            style={{
+              minHeight: '400px',
+              justifyContent: 'center',
+              backgroundColor: '#5B1F6B',
+            }}
+          >
+            <ContentBox>
+              <img src={bellIcon} />
+            </ContentBox>
+          </StyledCard>
+        </Grid>
+      )}
+
       {cardList.map((item, index) => (
         <Grid item xs={12} md={6} key={index}>
           <StyledCard elevation={6}>

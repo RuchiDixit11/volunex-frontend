@@ -1,5 +1,14 @@
 import { LoadingButton } from '@mui/lab';
-import { Card, Checkbox, Grid, TextField } from '@mui/material';
+import {
+  Card,
+  Checkbox,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from '@mui/material';
 import { Box, styled, useTheme } from '@mui/system';
 import { Paragraph } from 'app/components/Typography';
 import useAuth from 'app/hooks/useAuth';
@@ -7,6 +16,8 @@ import { Formik } from 'formik';
 import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
+import Mylogo from '../../../assets/img/mylog.png';
+import BannerImage from '../../../assets/img/waldemar.jpg';
 
 const FlexBox = styled(Box)(() => ({ display: 'flex', alignItems: 'center' }));
 
@@ -20,7 +31,12 @@ const ContentBox = styled(Box)(() => ({
 }));
 
 const JWTRoot = styled(JustifyBox)(() => ({
-  background: '#1A2038',
+  backgroundImage: `url(${BannerImage})`,
+  backgroundAttachment: 'fixed',
+  backgroundPosition: 'center',
+  backgroundRepeat: ' no-repeat',
+  backgroundSize: 'cover',
+  display: 'grid',
   minHeight: '100% !important',
   '& .card': {
     maxWidth: 800,
@@ -34,9 +50,10 @@ const JWTRoot = styled(JustifyBox)(() => ({
 
 // inital login credentials
 const initialValues = {
-  email: 'jason@ui-lib.com',
-  password: 'dummyPass',
+  email: '',
+  password: '123456',
   remember: true,
+  user_type: '1',
 };
 
 // form field validation schema
@@ -57,11 +74,17 @@ const JwtLogin = () => {
   const handleFormSubmit = async (values) => {
     setLoading(true);
     try {
-      await login(values.email, values.password);
+      await login(values.email, values.password, values.user_type);
+      console.log('user login::::', values);
       navigate('/');
     } catch (e) {
       setLoading(false);
     }
+  };
+
+  const handleUserTypeChange = (event) => {
+    const selectedUserType = event.target.value;
+    console.log('Selected User Type:', selectedUserType);
   };
 
   return (
@@ -70,7 +93,7 @@ const JwtLogin = () => {
         <Grid container>
           <Grid item sm={6} xs={12}>
             <JustifyBox p={4} height="100%" sx={{ minWidth: 320 }}>
-              <img src="/assets/images/illustrations/dreamer.svg" width="100%" alt="" />
+              <img src={Mylogo} width="100%" alt="" />
             </JustifyBox>
           </Grid>
 
@@ -83,9 +106,28 @@ const JwtLogin = () => {
               >
                 {({ values, errors, touched, handleChange, handleBlur, handleSubmit }) => (
                   <form onSubmit={handleSubmit}>
+                    <FormControl sx={{ width: '100%', mb: 3 }}>
+                      <InputLabel id="demo-simple-select-label">User Type</InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={values.user_type}
+                        label="User Type"
+                        onChange={(event) => {
+                          handleUserTypeChange(event);
+                          handleChange(event);
+                        }}
+                        // onBlur={handleBlur}
+                        name="user_type"
+                      >
+                        <MenuItem value={'1'}>Organization</MenuItem>
+                        <MenuItem value={'2'}>Volunteer</MenuItem>
+                      </Select>
+                    </FormControl>
+
                     <TextField
                       fullWidth
-                      size="small"
+                      size="full"
                       type="email"
                       name="email"
                       label="Email"
@@ -100,7 +142,7 @@ const JwtLogin = () => {
 
                     <TextField
                       fullWidth
-                      size="small"
+                      size="full"
                       name="password"
                       type="password"
                       label="Password"
@@ -126,12 +168,14 @@ const JwtLogin = () => {
                         <Paragraph>Remember Me</Paragraph>
                       </FlexBox>
 
-                      <NavLink
+                      {/* <NavLink
                         to="/session/forgot-password"
-                        style={{ color: theme.palette.primary.main }}
+                        style={{
+                          color: theme.palette.primary.main,
+                        }}
                       >
                         Forgot password?
-                      </NavLink>
+                      </NavLink> */}
                     </FlexBox>
 
                     <LoadingButton
@@ -148,7 +192,10 @@ const JwtLogin = () => {
                       Don't have an account?
                       <NavLink
                         to="/session/signup"
-                        style={{ color: theme.palette.primary.main, marginLeft: 5 }}
+                        style={{
+                          color: theme.palette.primary.main,
+                          marginLeft: 5,
+                        }}
                       >
                         Register
                       </NavLink>

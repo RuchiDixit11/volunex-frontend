@@ -108,42 +108,32 @@ const NotificationBar = ({ container }) => {
               <h5>Notifications</h5>
             </Notification>
 
-            {notifications?.map((notification) => (
-              <NotificationCard key={notification.id}>
-                <DeleteButton
-                  size="small"
-                  className="deleteButton"
-                  onClick={() => deleteNotification(notification.id)}
-                >
-                  <Icon className="icon">clear</Icon>
-                </DeleteButton>
-                <Link
-                  to={`/${notification.path}`}
-                  onClick={handleDrawerToggle}
-                  style={{ textDecoration: 'none' }}
-                >
-                  <Card sx={{ mx: 2, mb: 3 }} elevation={3}>
-                    <CardLeftContent>
-                      <Box display="flex">
-                        <Icon className="icon" color={notification.icon.color}>
-                          {notification.icon.name}
-                        </Icon>
-                        <Heading>{notification.heading}</Heading>
-                      </Box>
-                      <Small className="messageTime">
-                        {getTimeDifference(new Date(notification.timestamp))}
-                        ago
-                      </Small>
-                    </CardLeftContent>
-                    <Box sx={{ px: 2, pt: 1, pb: 2 }}>
-                      <Paragraph sx={{ m: 0 }}>{notification.title}</Paragraph>
-                      <Small sx={{ color: secondary }}>{notification.subtitle}</Small>
-                    </Box>
-                  </Card>
-                </Link>
-              </NotificationCard>
-            ))}
-            {!!notifications?.length && (
+            {notifications?.eventInfo &&
+              notifications?.eventInfo?.map((notification) => (
+                <NotificationCard key={notification?.org_id}>
+                  <DeleteButton
+                    size="small"
+                    className="deleteButton"
+                    onClick={() => deleteNotification(notification?.org_id)}
+                  >
+                    <Icon className="icon">clear</Icon>
+                  </DeleteButton>
+                  <Link
+                    to={`/${notification?.org_id}`}
+                    onClick={handleDrawerToggle}
+                    style={{ textDecoration: 'none' }}
+                  >
+                    <Card sx={{ mx: 2, mb: 3 }} elevation={3}>
+                      <CardLeftContent>
+                        <Box display="flex">
+                          <Heading>{notification?.notes}</Heading>
+                        </Box>
+                      </CardLeftContent>
+                    </Card>
+                  </Link>
+                </NotificationCard>
+              ))}
+            {!!notifications?.eventInfo?.length && (
               <Box sx={{ color: secondary }}>
                 <Button onClick={clearNotifications}>Clear Notifications</Button>
               </Box>

@@ -1,8 +1,8 @@
 import { Box, styled } from '@mui/material';
-import { MatxLogo } from 'app/components';
+import { MyLogo } from 'app/components';
 import useSettings from 'app/hooks/useSettings';
 import { Span } from './Typography';
-
+import Logo from '../../assets/img/mylog.png';
 const BrandRoot = styled(Box)(() => ({
   display: 'flex',
   alignItems: 'center',
@@ -24,15 +24,19 @@ const Brand = ({ children }) => {
   return (
     <BrandRoot>
       <Box display="flex" alignItems="center">
-        <MatxLogo />
+        {/* <MyLogo /> */}
+        <img src={Logo} style={{ width: '100%', maxWidth: '39px' }} />
         <StyledSpan mode={mode} className="sidenavHoverShow">
-          Matx
+          Volunex
         </StyledSpan>
       </Box>
 
-      <Box className="sidenavHoverShow" sx={{ display: mode === 'compact' ? 'none' : 'block' }}>
+      {/* <Box
+        className="sidenavHoverShow"
+        sx={{ display: mode === "compact" ? "none" : "block" }}
+      >
         {children || null}
-      </Box>
+      </Box> */}
     </BrandRoot>
   );
 };

@@ -69,7 +69,11 @@ const SimpleForm = () => {
               onChange={handleChange}
               errorMessages={["this field is required"]}
               label="Username (Min length 4, Max length 9)"
-              validators={["required", "minStringLength: 4", "maxStringLength: 9"]}
+              validators={[
+                "required",
+                "minStringLength: 4",
+                "maxStringLength: 9",
+              ]}
             />
 
             <TextField
@@ -115,7 +119,11 @@ const SimpleForm = () => {
               onChange={handleChange}
               value={creditCard || ""}
               errorMessages={["this field is required"]}
-              validators={["required", "minStringLength:16", "maxStringLength: 16"]}
+              validators={[
+                "required",
+                "minStringLength:16",
+                "maxStringLength: 16",
+              ]}
             />
           </Grid>
 
@@ -145,7 +153,10 @@ const SimpleForm = () => {
               label="Confirm Password"
               value={confirmPassword || ""}
               validators={["required", "isPasswordMatch"]}
-              errorMessages={["this field is required", "password didn't match"]}
+              errorMessages={[
+                "this field is required",
+                "password didn't match",
+              ]}
             />
             <RadioGroup
               row
