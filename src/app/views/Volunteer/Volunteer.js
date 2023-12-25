@@ -181,7 +181,6 @@ const VolunteerList = () => {
             <MenuItem value="1">Swimming </MenuItem>
             <MenuItem value="2">Mountain climber</MenuItem>
             <MenuItem value="3">Fire&Safety</MenuItem>
-            <MenuItem value="4">Runners</MenuItem>
           </Select>
         </CardHeader>
         <EnhancedTable handleSendRequest={handleSendRequest} data={filteredData} />

@@ -29,6 +29,7 @@ import {
   DialogContentText,
   DialogTitle,
   TextField,
+  TextareaAutosize,
 } from '@mui/material';
 
 function createData(id, volunteer_name, volunteer_experience, volunteer_location, action) {
@@ -199,7 +200,7 @@ EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
 
-function EnhancedTable({ data, handleSendRequest }) {
+function EnhancedTable({ data, handleSendMessage }) {
   console.log(data, 'filterddddd data  ');
   const [dataFilter, setFilteredData] = React.useState(data);
   console.log('hjgsjh');
@@ -228,6 +229,11 @@ function EnhancedTable({ data, handleSendRequest }) {
     CreateTableData();
     // setFilteredData(rows);
   }, [data]);
+
+  const handleSendRequest = (e) => {
+    setNotificationMessage(e.target.value);
+    alert('Send Message successfully');
+  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -388,30 +394,56 @@ function EnhancedTable({ data, handleSendRequest }) {
         <DialogContent style={{ minWidth: '400px' }}>
           <DialogContentText id="alert-dialog-slide-description">
             <div style={{ padding: '20px' }}>
-              <TextField
-                type="text"
-                name="notes"
-                id="standard-basic"
-                value={notificationMessage}
-                onChange={(e) => {
-                  setNotificationMessage(e.target.value);
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  // flexWrap: 'wrap',
                 }}
-                label="Notification message"
-                variant="outlined"
-                sx={{ mb: 3 }}
-              />
+              >
+                {/* <textarea
+                  placeholder="Type in here…"
+                  variant="solid"
+                  type="text"
+                  name="notes"
+                  id="standard-basic"
+                  value={notificationMessage}
+                  onChange={(e) => {
+                    setNotificationMessage(e.target.value);
+                  }}
+                  label="Notification message"
+                    */}
+                {/* /> */}
+                <textarea
+                  type="text"
+                  name="notes"
+                  id="standard-basic"
+                  value={notificationMessage}
+                  onChange={(e) => {
+                    handleSendRequest();
+                    // setNotificationMessage(e.target.value);
+                  }}
+                  label="Notification message"
+                  variant="outlined"
+                  sx={{ mb: 3 }}
+                  minLength={12}
+                />
+              </Box>
+              {/*
+               */}
             </div>
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenCampaignMessage(false)} color="primary">
-            Disagree
+            Cancle
           </Button>
           <Button
             onClick={() => handleSendRequest(selected, notificationMessage, setOpenCampaignMessage)}
             color="primary"
           >
-            Agree
+            Send
           </Button>
         </DialogActions>
       </Dialog>

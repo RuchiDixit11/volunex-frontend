@@ -32,7 +32,12 @@ const MenuProps = {
     },
   },
 };
-const names = ['Swimmer', 'Web', 'Event Planning', 'Ralph Hubbard', 'Omar Alexander'];
+const names = [
+  { id: 1, name: 'Swimmer' },
+  { id: 2, name: ' mountain climber' },
+  { id: 3, name: 'Fire&Safety' },
+];
+// const names = ['Swimmer', 'Web', 'Event Planning', 'Ralph Hubbard', 'Omar Alexander'];
 
 export default function StepperFormRegistration({ handleFormSubmit }) {
   const [selectedUserType, setSelectedUserType] = useState('');
@@ -382,11 +387,11 @@ export default function StepperFormRegistration({ handleFormSubmit }) {
                               >
                                 {names.map((name) => (
                                   <MenuItem
-                                    key={name}
-                                    value={name}
+                                    key={name.id}
+                                    value={name.id}
                                     // style={getStyles(name, personName, theme)}
                                   >
-                                    {name}
+                                    {name.name}
                                   </MenuItem>
                                 ))}
                               </Select>
@@ -626,7 +631,7 @@ export default function StepperFormRegistration({ handleFormSubmit }) {
                             <TextField
                               fullWidth
                               size="full"
-                              type="text"
+                              type="number"
                               name="organization_zip"
                               value={values.organization_zip || ''}
                               label="Zip"
@@ -665,7 +670,7 @@ export default function StepperFormRegistration({ handleFormSubmit }) {
                             <TextField
                               fullWidth
                               size="full"
-                              type="text"
+                              type="number"
                               name="organization_year_founded"
                               value={values.organization_year_founded || ''}
                               label="Year founded"
@@ -692,7 +697,7 @@ export default function StepperFormRegistration({ handleFormSubmit }) {
                               type="text"
                               name="organization_employees"
                               value={values.organization_employees || ''}
-                              label="Employees"
+                              label="No of Employees"
                               onChange={handleChange}
                               validators={['required']}
                               errorMessages={['this field is required']}

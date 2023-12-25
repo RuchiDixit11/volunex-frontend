@@ -43,7 +43,7 @@ const MenuProps = {
 };
 
 const UserType = ['Orgnaization', 'Volunteer'];
-const names = ['Marketing', 'Web Development', 'Event Planning', 'Ralph Hubbard', 'Omar Alexander'];
+const names = ['Swimmer', ' mountain climber', 'Fire&Safety'];
 
 function getStyles(name, personName, theme) {
   return {
