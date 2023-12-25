@@ -1,5 +1,5 @@
 import { Avatar, Box, Divider, Icon, IconButton, styled, TextField, useTheme } from '@mui/material';
-import { ChatAvatar } from 'app/components';
+
 import { convertHexToRGB } from 'app/utils/utils';
 import { useCallback, useEffect, useState } from 'react';
 import ScrollBar from 'react-perfect-scrollbar';
@@ -235,7 +235,6 @@ const Chatbox = ({ togglePopup }) => {
     <ChatContainer>
       <ProfileBox>
         <Box display="flex" alignItems="center">
-          <ChatAvatar src="/assets/images/face-2.jpg" status="online" />
           <ChatStatus>
             <H5>Ryan Todd</H5>
             <Span>Active</Span>

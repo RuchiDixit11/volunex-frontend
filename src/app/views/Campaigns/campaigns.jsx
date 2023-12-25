@@ -146,16 +146,18 @@ const Campaigns = () => {
       <Box className="breadcrumb">
         <Breadcrumb routeSegments={[{ name: 'Dashboard', path: '/' }, { name: 'Campaigns' }]} />
       </Box>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'end',
-        }}
-      >
-        <Button variant="outlined" onClick={handleClickOpen} sx={{ mb: 4 }}>
-          Create Campaign
-        </Button>
-      </div>
+      {userType === '1' && (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'end',
+          }}
+        >
+          <Button variant="outlined" onClick={handleClickOpen} sx={{ mb: 4 }}>
+            Create Campaign
+          </Button>
+        </div>
+      )}
       <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
         <CardHeader>
           <Title>Campaigns List</Title>
@@ -258,10 +260,10 @@ const Campaigns = () => {
                       </DialogContent>
                       <DialogActions>
                         <Button onClick={() => handleCloseDelete()} color="primary">
-                          Disagree
+                          Cancle
                         </Button>
                         <Button onClick={() => handleDeleteCampaign(cam?._id)} color="primary">
-                          Agree
+                          Delete
                         </Button>
                       </DialogActions>
                     </Dialog>

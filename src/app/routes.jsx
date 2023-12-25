@@ -1,5 +1,5 @@
 import AuthGuard from 'app/auth/AuthGuard';
-import chartsRoute from 'app/views/charts/ChartsRoute';
+// import chartsRoute from 'app/views/charts/ChartsRoute';
 import dashboardRoutes from 'app/views/dashboard/DashboardRoutes';
 import materialRoutes from 'app/views/material-kit/MaterialRoutes';
 import NotFound from 'app/views/sessions/NotFound';
@@ -14,7 +14,7 @@ const routes = [
         <MatxLayout />
       </AuthGuard>
     ),
-    children: [...dashboardRoutes, ...chartsRoute, ...materialRoutes],
+    children: [...dashboardRoutes, ...materialRoutes],
   },
   ...sessionRoutes,
   { path: '/', element: <Navigate to="dashboard/default" /> },

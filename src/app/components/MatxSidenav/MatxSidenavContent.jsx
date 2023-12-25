@@ -7,7 +7,7 @@ const Content = styled('div')(() => ({
 }));
 
 const MatxSidenavContent = ({ children }) => {
-  return <Content>{children}</Content>;
+  return <Content>{children} </Content>;
 };
 
 export default MatxSidenavContent;

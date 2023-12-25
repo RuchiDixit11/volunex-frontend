@@ -39,7 +39,7 @@ const Notification = () => {
                   <div>
                     <div></div>
                     <div>
-                      <h3 className="notification-title">title</h3>
+                      <h6 className="notification-title">Hey! you have notification.</h6>
                       <p>{notification?.notes}</p>
                     </div>
                   </div>
